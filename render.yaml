@@ -1,1 +1,4 @@
-buildCommand: "pip install -r bettvplus-web/requirements.txt"
+app.py
+render.yaml
+requirements.txt
+
