@@ -1,6 +1,2 @@
-services:
-  - type: web
-    name: bettvplus-web
-    env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn glavnicapp:app"
+buildCommand: "pip install -r requirements.txt"
+startCommand: "gunicorn app:app"
