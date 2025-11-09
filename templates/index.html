@@ -1,14 +1,113 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>BetTV+</title>
+  <meta charset="UTF-8">
+  <title>Bet TV Plus</title>
+
+  <!-- Uvoz Video.js biblioteke -->
+  <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 40px;
+    }
+    .video-container {
+      width: 80%;
+      max-width: 800px;
+      margin: auto;
+    }
+  </style>
 </head>
 <body>
-    <h1>Bet TV Plus</h1>
-    <video width="640" height="360" controls autoplay>
-        <source src="https://tvoj-stream-link.m3u8" type="application/x-mpegURL">
-        Tvoj preglednik ne podržava video element.
+  <h1>Bet TV Plus - Live</h1>
+  <div class="video-container">
+    <video
+      id="my-video"
+      class="video-js vjs-big-play-centered"
+      controls
+      preload="auto"
+      width="800"
+      height="450"
+      data-setup='{}'>
+      <source src="http://anotv.org:80/get.php?username=Slaven@Test&password=@Y@8rY5gfX4@&type=m3u_plus&output=mpegts" type="application/x-mpegURL" />
+      Tvoj preglednik ne podržava video reprodukciju.
     </video>
+  </div>
 </body>
 </html>
+<source src="https://tvoj-stream-link.m3u8" type="application/x-mpegURL" />
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Bet TV Plus</title>
+
+  <!-- Video.js CSS i JS -->
+  <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    .video-container {
+      width: 90%;
+      max-width: 900px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+    .vjs-control-bar {
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .vjs-big-play-button {
+      background-color: rgba(255, 255, 255, 0.2);
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Bet TV Plus - Live Player</h1>
+
+  <div class="video-container">
+    <video
+      id="my-video"
+      class="video-js vjs-fluid vjs-big-play-centered"
+      controls
+      autoplay
+      preload="auto"
+      data-setup='{"fluid": true}'>
+      <source src="https://tvoj-stream-link.m3u8" type="application/x-mpegURL" />
+      Tvoj preglednik ne podržava video reprodukciju.
+    </video>
+  </div>
+
+  <script>
+    const player = videojs('my-video');
+    player.ready(function() {
+      player.volume(0.8);
+    });
+  </script>
+</body>
+</html>
+
+
