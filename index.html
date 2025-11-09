@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>BetTV Plus</title>
-  </head>
-  <body>
-    <h1>Dobrodošli!</h1>
-    <p>Aplikacija radi ispravno.</p>
-  </body>
+<head>
+    <title>BetTV Plus - Aktivacija</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 100px;">
+    <h1>Aktivacija uređaja</h1>
+    <form action="/activate" method="post">
+        <p><input type="text" name="mac" placeholder="Unesi MAC adresu" required></p>
+        <p><input type="text" name="playlist" placeholder="Unesi mainplaylist URL" required></p>
+        <p><button type="submit">Aktiviraj</button></p>
+    </form>
+</body>
 </html>
