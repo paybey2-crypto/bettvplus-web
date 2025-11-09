@@ -1,6 +1,10 @@
-git init
-git add .
-git commit -m "initial commit"
-git branch -M main
-git remote add origin https://github.com/TVPlusUser/bettvplus-web.git   # zamijeni sa svojom adresom
-git push -u origin main
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "App is running!"
+
+if __name__ == '__main__':
+    app.run()
