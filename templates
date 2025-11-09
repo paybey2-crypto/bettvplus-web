@@ -1,1 +1,11 @@
-index.html
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>BetTVPlus Web</title>
+</head>
+<body>
+    <h1>BetTVPlus Web radi!</h1>
+    <p>Aplikacija je uspješno pokrenuta.</p>
+</body>
+</html>
