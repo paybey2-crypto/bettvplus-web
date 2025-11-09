@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: bettvplus
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn bettv.wsgi:application"
+    pythonVersion: 3.11.9
