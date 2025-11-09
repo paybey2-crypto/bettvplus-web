@@ -2,138 +2,59 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <title>Bet TV Plus</title>
-
-  <!-- Uvoz Video.js biblioteke -->
-  <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-  <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bet TV Plus - Aktivacija</title>
   <style>
     body {
       background-color: #111;
-      color: white;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      margin-top: 40px;
-    }
-    .video-container {
-      width: 80%;
-      max-width: 800px;
-      margin: auto;
-    }
-  </style>
-</head>
-<body>
-  <h1>Bet TV Plus - Live</h1>
-  <div class="video-container">
-    <video
-      id="my-video"
-      class="video-js vjs-big-play-centered"
-      controls
-      preload="auto"
-      width="800"
-      height="450"
-      data-setup='{}'>
-      <source src="http://anotv.org:80/get.php?username=Slaven@Test&password=@Y@8rY5gfX4@&type=m3u_plus&output=mpegts" type="application/x-mpegURL" />
-      Tvoj preglednik ne podržava video reprodukciju.
-    </video>
-  </div>
-</body>
-</html>
-<source src="https://tvoj-stream-link.m3u8" type="application/x-mpegURL" />
-<!DOCTYPE html>
-<html lang="hr">
-<head>
-  <meta charset="UTF-8">
-  <title>Bet TV Plus</title>
-
-  <!-- Video.js CSS i JS -->
-  <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-  <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
-
-  <style>
-    body {
-      background-color: #000;
       color: #fff;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      text-align: center;
       margin: 0;
+      padding: 40px;
     }
     h1 {
-      margin-bottom: 20px;
-      font-weight: 500;
-      letter-spacing: 1px;
+      color: #f5c518;
     }
-    .video-container {
-      width: 90%;
-      max-width: 900px;
-      border: 2px solid #333;
+    form {
+      background-color: #222;
+      padding: 20px;
       border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      width: 300px;
+      margin: 30px auto;
+      box-shadow: 0 0 10px #000;
     }
-    .vjs-control-bar {
-      background: rgba(0, 0, 0, 0.6);
-    }
-    .vjs-big-play-button {
-      background-color: rgba(255, 255, 255, 0.2);
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
       border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+    input[type="submit"] {
+      background-color: #f5c518;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    input[type="submit"]:hover {
+      background-color: #e0b917;
     }
   </style>
 </head>
 <body>
-  <h1>🎥 Bet TV Plus - Live Player</h1>
-
-  <div class="video-container">
-    <video
-      id="my-video"
-      class="video-js vjs-fluid vjs-big-play-centered"
-      controls
-      autoplay
-      preload="auto"
-      data-setup='{"fluid": true}'>
-      <source src="https://tvoj-stream-link.m3u8" type="application/x-mpegURL" />
-      Tvoj preglednik ne podržava video reprodukciju.
-    </video>
-  </div>
-
-  <script>
-    const player = videojs('my-video');
-    player.ready(function() {
-      player.volume(0.8);
-    });
-  </script>
-  <!DOCTYPE html>
-<html lang="hr">
-<head>
-  <meta charset="UTF-8">
-  <title>BetTV Plus - Live</title>
-  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-</head>
-<body style="background:#111; color:#fff; text-align:center;">
-  <h1>Bet TV Plus - Live Player</h1>
-
-  <video
-    id="liveplayer"
-    class="video-js vjs-big-play-centered"
-    controls
-    autoplay
-    preload="auto"
-    width="800"
-    height="450"
-    data-setup='{}'>
-    <source src="http://anotv.org:80/get.php?username=Slaven@Test&password=@Y@8rY5gfX4@&type=m3u_plus&output=mpegts" type="application/x-mpegURL">
-  </video>
-
-  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+  <h1>Bet TV Plus - Aktivacija</h1>
+  <form action="/activate" method="POST">
+    <label for="mac">MAC adresa:</label><br>
+    <input type="text" id="mac" name="mac" placeholder="Unesi MAC..." required><br>
+    <label for="playlist">Main Playlist URL:</label><br>
+    <input type="text" id="playlist" name="playlist" placeholder="Unesi playlist URL..." required><br>
+    <input type="submit" value="Aktiviraj">
+  </form>
+  <p>Unesi MAC i playlist link da aktiviraš uređaj.</p>
 </body>
 </html>
 
-</body>
-</html>
 
 
