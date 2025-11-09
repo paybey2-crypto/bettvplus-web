@@ -1,2 +1,6 @@
-web: gunicorn main:app
+.gitignore
+README.md
+manage.py
+...
+
 
