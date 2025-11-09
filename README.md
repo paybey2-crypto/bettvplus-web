@@ -1,1 +1,5 @@
-[# bettvplus-web](http://README.md)
+.gitignore
+README.md
+manage.py
+...
+
