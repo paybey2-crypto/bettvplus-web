@@ -8,10 +8,7 @@ def login():
         return render_template('error.html', message="Nedostaju podaci za prijavu.")
 
     return render_template('success.html', mac=mac)
-    if __name__ == '__main__':
-    app.run(debug=True)
-    
-@app.route('/')
+    @app.route('/')
 def index():
     return render_template('index.html')
 if __name__ == '__main__':
