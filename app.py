@@ -1,18 +1,19 @@
-
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
 
-# Kreiraj bazu ako ne postoji
+# Kreira bazu ako ne postoji
 def init_db():
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS activations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    mac TEXT UNIQUE,
-                    playlist TEXT
-                )''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS activations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mac TEXT UNIQUE,
+            playlist TEXT
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -32,6 +33,7 @@ def activate():
 
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
+
     try:
         c.execute("INSERT INTO activations (mac, playlist) VALUES (?, ?)", (mac, playlist))
         conn.commit()
@@ -40,8 +42,7 @@ def activate():
     finally:
         conn.close()
 
-    return "Uređaj uspješno aktiviran!"
+    return f"✅ Uređaj s MAC adresom {mac} je uspješno aktiviran!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
-
