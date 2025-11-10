@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request
-import sqlite3
+from flask import Flask, render_template, request, redirect, jsonify
+import sqlite3, stripe
 
 app = Flask(__name__)
 
-# Kreira bazu ako ne postoji
+stripe.api_key = "pk_live_51S1UQSFZy9W3RRoZSsCTntCqymYTneZKjtndO5vOB7cmw7bNgLvFABjQDTcaZrt8xFbdtbDbBwpHZxUcPUK72UXZ00yg9sjrO2"  # <- Ovdje zalijepi svoj ključ
+
 def init_db():
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
@@ -11,7 +12,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS activations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             mac TEXT UNIQUE,
-            playlist TEXT
+            playlist TEXT,
+            paid INTEGER DEFAULT 0
         )
     ''')
     conn.commit()
@@ -28,61 +30,50 @@ def activate():
     mac = request.form.get('mac')
     playlist = request.form.get('playlist')
 
-    if not mac or not playlist:
-        return "Greška: MAC i playlist su obavezni podaci.", 400
+    # Napravi Stripe checkout sesiju
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'eur',
+                'product_data': {'name': f'Bet TV Plus aktivacija ({mac})'},
+                'unit_amount': 500,  # 5.00 EUR u centima
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=f'http://localhost:5000/payment_success?mac={mac}&playlist={playlist}',
+        cancel_url='http://localhost:5000/',
+    )
 
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
+    return redirect(session.url, code=303)
 
-    try:
-        c.execute("INSERT INTO activations (mac, playlist) VALUES (?, ?)", (mac, playlist))
-        conn.commit()
-    except sqlite3.IntegrityError:
-        return "Ovaj MAC je već aktiviran.", 400
-    finally:
-        conn.close()
-
-    return f"✅ Uređaj s MAC adresom {mac} je uspješno aktiviran!"
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
-    @app.route('/get_playlist')
-def get_playlist():
+@app.route('/payment_success')
+def payment_success():
     mac = request.args.get('mac')
+    playlist = request.args.get('playlist')
+
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
-    c.execute("SELECT playlist FROM activations WHERE mac=?", (mac,))
-    result = c.fetchone()
+    c.execute("INSERT OR REPLACE INTO activations (mac, playlist, paid) VALUES (?, ?, 1)", (mac, playlist))
+    conn.commit()
     conn.close()
 
-    if result:
-        return {'playlist': result[0]}
-    else:
-        return {'playlist': None}
-        @app.route('/activate', methods=['POST'])
-def activate():
-    ...
-    conn.close()
-    return 'OK'
+    return f"<h2>MAC {mac} je uspješno aktiviran!</h2><a href='/player?mac={mac}'>Otvori player</a>"
 
-# ⬇️ OVDJE UBACI NOVI KOD
 @app.route('/get_playlist')
 def get_playlist():
     mac = request.args.get('mac')
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
-    c.execute("SELECT playlist FROM activations WHERE mac=?", (mac,))
-    result = c.fetchone()
+    c.execute("SELECT playlist FROM activations WHERE mac=? AND paid=1", (mac,))
+    row = c.fetchone()
     conn.close()
+    return jsonify({'playlist': row[0] if row else None})
 
-    if result:
-        return {'playlist': result[0]}
-    else:
-        return {'playlist': None}
+@app.route('/player')
+def player():
+    return render_template('player.html')
 
-# ⬇️ Ako postoji, ovo ostavi zadnje
 if __name__ == '__main__':
-    app.run()
-
-/player?mac=TVOJ_MAC
-
+    app.run(debug=True)
