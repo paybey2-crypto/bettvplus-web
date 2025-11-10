@@ -80,3 +80,9 @@ def admin():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    
+{
+  "devices": {
+    "59:d9:5d:f3:8c:cf": "943169"
+  }
+}
