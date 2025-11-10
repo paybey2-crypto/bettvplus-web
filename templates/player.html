@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bet TV Plus - Player</title>
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .video-container {
+            width: 80%;
+            max-width: 900px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bet TV Plus - Live Player</h1>
+    <div class="video-container">
+        <video id="player" class="video-js vjs-big-play-centered" controls preload="auto" width="800" height="450"></video>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const mac = urlParams.get('mac');
+
+        fetch(`/get_playlist?mac=${mac}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.playlist) {
+                    const player = videojs('player');
+                    player.src({ src: data.playlist, type: 'application/x-mpegURL' });
+                    player.play();
+                } else {
+                    document.body.innerHTML += "<p>Greška: Nema playlist linka za ovaj MAC.</p>";
+                }
+            })
+            .catch(() => {
+                document.body.innerHTML += "<p>Greška pri povezivanju sa serverom.</p>";
+            });
+    </script>
+</body>
+</html>
