@@ -1,88 +1,130 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for, flash
-import os, json
+import os
+import sqlite3
+from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "change_this_secret")
 
-DB_FILE = "db.json"   # spremište mac+pin
+DB_PATH = "database.db"
+APK_FILENAME = "BETTVPLUS-PRO.apk"   # stavi apk u static/
 
-# Helper: učitaj db (ako ne postoji, kreiraj s primjerom)
-def load_db():
-    if not os.path.exists(DB_FILE):
-        example = {
-            "devices": {
-                "59:d9:5d:f3:8c:cf": "943169"
-            }
-        }
-        with open(DB_FILE, "w") as f:
-            json.dump(example, f, indent=2)
-    with open(DB_FILE, "r") as f:
-        return json.load(f)
+# --- DB init ---
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS devices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mac TEXT UNIQUE,
+            pin TEXT,
+            playlist TEXT,
+            created_at TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-def save_db(data):
-    with open(DB_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+def get_device(mac):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id,mac,pin,playlist,created_at FROM devices WHERE mac = ?", (mac,))
+    row = c.fetchone()
+    conn.close()
+    return row
 
-@app.route("/")
+def create_or_update_device(mac, pin):
+    now = datetime.utcnow().isoformat()
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    # try insert, if exists update pin
+    try:
+        c.execute("INSERT INTO devices (mac,pin,playlist,created_at) VALUES (?,?,?,?)",
+                  (mac, pin, "", now))
+    except sqlite3.IntegrityError:
+        c.execute("UPDATE devices SET pin = ? WHERE mac = ?", (pin, mac))
+    conn.commit()
+    conn.close()
+
+def save_playlist(mac, playlist_url):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE devices SET playlist = ? WHERE mac = ?", (playlist_url, mac))
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# --- routes ---
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/login", methods=["POST"])
+@app.route('/login', methods=['POST'])
 def login():
-    mac = request.form.get("mac", "").strip()
-    code = request.form.get("code", "").strip()
-    db = load_db()
-    devices = db.get("devices", {})
-    # jednostavna provjera
-    if mac and code and mac in devices and devices[mac] == code:
-        return render_template("success.html", mac=mac)
+    mac = request.form.get('mac', '').strip().lower()
+    pin = request.form.get('pin', '').strip()
+    if not mac or not pin:
+        flash("Unesi MAC i PIN.", "danger")
+        return redirect(url_for('index'))
+
+    device = get_device(mac)
+    if device:
+        # device = (id, mac, pin, playlist, created_at)
+        stored_pin = device[2]
+        if stored_pin == pin:
+            return redirect(url_for('dashboard', mac=mac))
+        else:
+            flash("PIN nije točan.", "danger")
+            return redirect(url_for('index'))
     else:
-        # možeš flash poruku i vratiti se na index
-        flash("MAC adresa ili PIN nisu ispravni.")
-        return redirect(url_for("index"))
+        # create device with given pin and empty playlist
+        create_or_update_device(mac, pin)
+        flash("Novi uređaj je kreiran i PIN spremljen. Sada si prijavljen.", "success")
+        return redirect(url_for('dashboard', mac=mac))
 
-# Ruta za preuzimanje APK fajla (stavi apk u static/ folder)
-@app.route("/download")
+@app.route('/dashboard/<mac>', methods=['GET', 'POST'])
+def dashboard(mac):
+    mac = mac.strip().lower()
+    device = get_device(mac)
+    if not device:
+        flash("MAC nije pronađen. Prijavi se prvo.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        # spremi playlist
+        playlist = request.form.get('playlist', '').strip()
+        save_playlist(mac, playlist)
+        flash("Playlist je spremljen.", "success")
+        return redirect(url_for('dashboard', mac=mac))
+
+    # GET: prikaži dashboard
+    playlist = device[3] or ""
+    return render_template('dashboard.html', mac=mac, playlist=playlist)
+
+@app.route('/download')
 def download_apk():
-    # ime fajla koje si uploadao u static/
-    apk_name = "BETTVPLUS-PRO.apk"
     static_dir = os.path.join(app.root_path, "static")
-    if not os.path.exists(os.path.join(static_dir, apk_name)):
-        return "APK not found. Upload it to the static folder.", 404
-    return send_from_directory(static_dir, apk_name, as_attachment=True)
+    apk_path = os.path.join(static_dir, APK_FILENAME)
+    if not os.path.exists(apk_path):
+        return "APK datoteka nije pronađena u static/ folderu.", 404
+    return send_from_directory(static_dir, APK_FILENAME, as_attachment=True)
 
-# Admin ruta za upravljanje device > pin (zahtijeva admin_key param kao jednostavna zaštita)
-# POZOR: ovo je minimalna zaštita za brzo testiranje. Ne koristiti bez TLS/pravog auth-a u produkciji.
-ADMIN_KEY = os.environ.get("ADMIN_KEY", "supersecretadmin")
-
-@app.route("/admin", methods=["GET","POST"])
+# simple admin: view devices (protected by simple key query param)
+@app.route('/admin', methods=['GET'])
 def admin():
-    key = request.args.get("key","")
+    key = request.args.get('key', '')
+    ADMIN_KEY = os.environ.get("ADMIN_KEY", "change_admin_key")
     if key != ADMIN_KEY:
         return "Access denied. Provide ?key=ADMIN_KEY", 403
 
-    db = load_db()
-    if request.method == "POST":
-        action = request.form.get("action")
-        mac = request.form.get("mac","").strip()
-        pin = request.form.get("pin","").strip()
-        if action == "add" and mac and pin:
-            db.setdefault("devices", {})[mac] = pin
-            save_db(db)
-            flash(f"Added/updated {mac}")
-        elif action == "delete" and mac:
-            if mac in db.get("devices", {}):
-                del db["devices"][mac]
-                save_db(db)
-                flash(f"Deleted {mac}")
-        return redirect(url_for("admin", key=key))
-    return render_template("admin.html", db=db)
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT mac, pin, playlist, created_at FROM devices ORDER BY id DESC")
+    rows = c.fetchall()
+    conn.close()
+    return render_template('admin.html', devices=rows)
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-    
-{
-  "devices": {
-    "59:d9:5d:f3:8c:cf": "943169"
-  }
-}
+if __name__ == '__main__':
+    # useful for local debug
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
