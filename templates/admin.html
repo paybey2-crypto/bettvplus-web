@@ -1,43 +1,29 @@
 
 <!doctype html>
-<html>
+<html lang="hr">
 <head>
   <meta charset="utf-8">
   <title>Admin — Devices</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
   <div class="page">
     <h2>Admin — Devices</h2>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="flash">{{ messages[0] }}</div>
-      {% endif %}
-    {% endwith %}
-
     <div class="card">
-      <h3>Dodaj / Promijeni</h3>
-      <form method="post">
-        <input type="hidden" name="action" value="add">
-        <input name="mac" placeholder="MAC (59:...)" required>
-        <input name="pin" placeholder="PIN (npr. 943169)" required>
-        <button type="submit">Spremi</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h3>Postojeći uređaji</h3>
-      <ul>
-        {% for k,v in db.devices.items() %}
-          <li>{{ k }} — {{ v }}
-            <form method="post" style="display:inline">
-              <input type="hidden" name="action" value="delete">
-              <input type="hidden" name="mac" value="{{ k }}">
-              <button type="submit">Obriši</button>
-            </form>
-          </li>
+      <table style="width:100%;color:#fff">
+        <thead><tr><th>MAC</th><th>PIN</th><th>Playlist</th><th>Created</th></tr></thead>
+        <tbody>
+        {% for mac,pin,playlist,created in devices %}
+          <tr>
+            <td>{{ mac }}</td>
+            <td>{{ pin }}</td>
+            <td style="max-width:300px;word-break:break-all">{{ playlist or '-' }}</td>
+            <td>{{ created }}</td>
+          </tr>
         {% endfor %}
-      </ul>
+        </tbody>
+      </table>
     </div>
   </div>
 </body>
