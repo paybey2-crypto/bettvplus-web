@@ -46,3 +46,18 @@ def activate():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
+    @app.route('/get_playlist')
+def get_playlist():
+    mac = request.args.get('mac')
+    conn = sqlite3.connect('data.db')
+    c = conn.cursor()
+    c.execute("SELECT playlist FROM activations WHERE mac=?", (mac,))
+    result = c.fetchone()
+    conn.close()
+
+    if result:
+        return {'playlist': result[0]}
+    else:
+        return {'playlist': None}
+/player?mac=TVOJ_MAC
+
