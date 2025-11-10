@@ -1,15 +1,60 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Bet TV Plus</title>
-  </head>
-  <body>
-    <h1>Dobrodošli na Bet TV Plus</h1>
-    <p>Plaćanje lifetime 7.99 €</p>
-    <button>Plati sada</button>
-  </body>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bet TV Plus - Aktivacija</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      color: #f5c518;
+    }
+    form {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      margin: 30px auto;
+      box-shadow: 0 0 10px #000;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+    input[type="submit"] {
+      background-color: #f5c518;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    input[type="submit"]:hover {
+      background-color: #e0b917;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bet TV Plus - Aktivacija</h1>
+  <form action="/activate" method="POST">
+    <label for="mac">MAC adresa:</label><br>
+    <input type="text" id="mac" name="mac" placeholder="Unesi MAC..." required><br>
+    <label for="playlist">Main Playlist URL:</label><br>
+    <input type="text" id="playlist" name="playlist" placeholder="Unesi playlist URL..." required><br>
+    <input type="submit" value="Aktiviraj">
+  </form>
+  <p>Unesi MAC i playlist link da aktiviraš uređaj.</p>
+</body>
 </html>
-
 
 
 
