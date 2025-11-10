@@ -1,4 +1,6 @@
-
+@app.route('/')
+def home():
+    return render_template('index.html')
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import sqlite3, stripe, datetime
 
