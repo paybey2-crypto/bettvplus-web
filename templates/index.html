@@ -1,50 +1,13 @@
 <!DOCTYPE html>
-<html lang="hr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bet TV Plus - Lifetime Aktivacija</title>
-  <script src="https://js.stripe.com/v3/"></script>
-</head>
-<body style="font-family: Arial; background: #101010; color: #fff; text-align: center; padding-top: 100px;">
-
-  <h1>Bet TV Plus</h1>
-  <p>Lifetime aktivacija - 7.99 €</p>
-
-  <form id="payment-form">
-    <input type="text" id="mac" name="mac" placeholder="Unesi MAC adresu" required style="padding:10px; border-radius:5px; border:none; width:250px;">
-    <br><br>
-    <input type="text" id="playlist" name="playlist" placeholder="Unesi playlist URL" required style="padding:10px; border-radius:5px; border:none; width:250px;">
-    <br><br>
-    <button type="submit" style="padding:10px 20px; border:none; border-radius:5px; background:#28a745; color:white; cursor:pointer;">
-      Kupi Lifetime
-    </button>
-  </form>
-
-  <script>
-    const stripe = Stripe("pk_live_TVOJ_PUBLIC_KEY"); // 🔹 Ovdje stavi svoj PUBLIC KEY iz Stripe-a
-
-    const form = document.getElementById("payment-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const mac = document.getElementById("mac").value;
-      const playlist = document.getElementById("playlist").value;
-
-      const res = await fetch("/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mac, playlist }),
-      });
-
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url; // 🔹 Preusmjeravanje na Stripe plaćanje
-      } else {
-        alert("Greška pri pokretanju plaćanja.");
-      }
-    });
-  </script>
-</body>
+<html>
+  <head>
+    <title>Bet TV Plus</title>
+  </head>
+  <body>
+    <h1>Dobrodošli na Bet TV Plus</h1>
+    <p>Plaćanje lifetime 7.99 €</p>
+    <button>Plati sada</button>
+  </body>
 </html>
 
 
