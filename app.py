@@ -1,3 +1,7 @@
-@app.route('/login')
-def login():
-    return "<h2>Login stranica je u izradi.</h2>"
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
