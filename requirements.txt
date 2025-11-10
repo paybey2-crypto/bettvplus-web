@@ -1,4 +1,4 @@
-gunicorn==21.2.0
-Flask==2.3.2
-
+Flask
+stripe
+gunicorn
 
