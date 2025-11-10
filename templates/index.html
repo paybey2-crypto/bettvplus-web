@@ -4,95 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prijava | BetTV Plus</title>
+    <title>Prijava</title>
     <style>
         body {
             margin: 0;
+            padding: 0;
             height: 100vh;
+            background: linear-gradient(135deg, #1e1e2f, #3b1e54, #5f27cd);
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #2b1055, #7597de);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
+            font-family: Arial, sans-serif;
         }
-        .login-box {
-            background-color: rgba(0, 0, 0, 0.4);
-            padding: 40px 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
             text-align: center;
-            width: 300px;
         }
-        .login-box h2 {
-            margin-bottom: 25px;
-            color: #fff;
-        }
-        .login-box input {
-            width: 100%;
+        input {
+            width: 250px;
             padding: 10px;
-            margin: 8px 0;
+            margin: 10px 0;
             border: none;
             border-radius: 8px;
             text-align: center;
-            font-size: 15px;
         }
-        .login-box input[type="text"] {
-            background-color: #fff;
-            color: #000;
-        }
-        .login-box button {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background-color: #6c63ff;
+        button {
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
+            background: #5f27cd;
+            color: white;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease;
         }
-        .login-box button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -75%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-25deg);
+        button:hover {
+            background: #341f97;
         }
-        .login-box button:hover::before {
-            animation: shine 0.8s forwards;
-        }
-        @keyframes shine {
-            100% {
-                left: 125%;
-            }
-        }
-        .login-box button:hover {
-            background-color: #5946d2;
-        }
-        footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 13px;
-            opacity: 0.7;
+        h2 {
+            color: white;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>BetTV Plus Prijava</h2>
-        <form action="/login" method="post">
-            <input type="text" name="mac" placeholder="Unesi MAC adresu" required>
-            <input type="text" name="code" placeholder="Unesi kod" required>
+    <div class="login-container">
+        <h2>Prijava</h2>
+        <form action="/login" method="POST">
+            <input type="text" name="mac" placeholder="Unesi MAC adresu" required><br>
+            <input type="text" name="code" placeholder="Unesi kod" required><br>
             <button type="submit">Prijava</button>
         </form>
     </div>
-    <footer>© 2025 BetTV Plus</footer>
 </body>
 </html>
