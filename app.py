@@ -15,7 +15,7 @@ def login():
     code = request.form.get('code')
 
     # Jednostavna provjera
-    if mac == '59:d9:5d:f3:8c:cf' and code == '38713':
+    if mac == '59:d9:5d:f3:8c:cf' and code == '943169':
         return render_template('success.html')
     else:
         return render_template('error.html')
