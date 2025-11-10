@@ -59,5 +59,30 @@ def get_playlist():
         return {'playlist': result[0]}
     else:
         return {'playlist': None}
+        @app.route('/activate', methods=['POST'])
+def activate():
+    ...
+    conn.close()
+    return 'OK'
+
+# ⬇️ OVDJE UBACI NOVI KOD
+@app.route('/get_playlist')
+def get_playlist():
+    mac = request.args.get('mac')
+    conn = sqlite3.connect('data.db')
+    c = conn.cursor()
+    c.execute("SELECT playlist FROM activations WHERE mac=?", (mac,))
+    result = c.fetchone()
+    conn.close()
+
+    if result:
+        return {'playlist': result[0]}
+    else:
+        return {'playlist': None}
+
+# ⬇️ Ako postoji, ovo ostavi zadnje
+if __name__ == '__main__':
+    app.run()
+
 /player?mac=TVOJ_MAC
 
