@@ -1,15 +1,19 @@
 <!doctype html>
 <html lang="hr">
 <head>
-  <meta charset="utf-8"><title>Hvala</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Plaćanje uspješno</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style> body { background:#071029; color:#fff; } .card{margin:30px auto; max-width:700px;} </style>
 </head>
 <body>
+<div class="container py-5">
   <div class="card p-4">
-    <h3>Uspjeh! MAC {{mac}} je aktiviran.</h3>
-    <p>Sada možeš otvoriti player:</p>
-    <a href="/player/{{mac}}" class="btn btn-success">Otvori player</a>
+    <h3>Hvala — plaćanje je uspješno</h3>
+    <p>MAC: <strong>{{ mac }}</strong></p>
+    <p>Aktivno do: <strong>{{ paid_until }}</strong></p>
+    <a class="btn btn-primary" href="{{ url_for('dashboard', mac=mac) }}">Natrag na dashboard</a>
   </div>
+</div>
 </body>
 </html>
