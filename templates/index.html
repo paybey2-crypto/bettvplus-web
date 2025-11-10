@@ -1,83 +1,32 @@
-<!DOCTYPE html>
-<html lang="hr">
+
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bet TV Plus - Prijava</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom right, #2e004f, #a32cc4, #c174f0);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-        }
-
-        .logo {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .login-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            width: 320px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-        }
-
-        h2 {
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        button {
-            width: 95%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #6b00b3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #8b00ff;
-        }
-
-        img {
-            width: 200px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Prijava — Bet TV Plus</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="logo">
-        <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo">
-    </div>
+  <div class="page">
+    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus" class="logo">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
 
-    <div class="login-container">
-        <h2>Prijava</h2>
-        <form method="POST" action="/login">
-            <input type="text" name="mac" placeholder="MAC adresa" required><br>
-            <input type="password" name="pin" placeholder="PIN" required><br>
-            <button type="submit">Prijava</button>
-        </form>
-    </div>
+    <form action="{{ url_for('login') }}" method="post" class="card">
+      <h2>Prijava</h2>
+      <input name="mac" placeholder="Unesi MAC adresu" required>
+      <input name="code" placeholder="Unesi PIN" required>
+      <button type="submit">Prijava</button>
+    </form>
+
+    <p class="download-note">
+      Ako želiš preuzeti APK:<br>
+      <a href="{{ url_for('download_apk') }}">Preuzmi BETTVPLUS-PRO.apk</a>
+    </p>
+  </div>
 </body>
 </html>
