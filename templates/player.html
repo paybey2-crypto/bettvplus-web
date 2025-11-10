@@ -1,60 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <title>Bet TV Plus - Live Player</title>
-  <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-  <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+  <meta charset="utf-8">
+  <title>Bet TV Plus - Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    body {
-      background-color: #111;
-      color: white;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      margin-top: 40px;
-    }
-    .video-container {
-      width: 80%;
-      max-width: 800px;
-      margin: auto;
-    }
+    body{ background:#0f0f10; color:#fff; font-family:Arial, sans-serif; text-align:center; padding:30px; }
+    .box{ max-width:900px; margin:0 auto; background:#111; padding:20px; border-radius:8px; }
+    a{ color:#ffd54a; }
+    .muted{ color:#aaa; margin-top:8px;}
+    iframe, video{ width:100%; height:480px; background:#000; border-radius:6px; }
   </style>
 </head>
 <body>
-  <h1>Bet TV Plus - Live Player</h1>
-  <div class="video-container">
-    <video id="my-video" class="video-js vjs-big-play-centered" controls preload="auto" width="800" height="450">
-      <source id="video-source" src="" type="application/x-mpegURL">
-    </video>
+  <h1>Bet TV Plus — Player</h1>
+  <div class="box">
+    <p>MAC: <strong>{{ mac }}</strong></p>
+    {% if paid %}
+      <p class="muted">Uređaj ima LIFETIME pristup.</p>
+      <!-- Ako je playlist URL direktni HLS (m3u8) možeš ubaciti video.js ili hls.js. Ovdje jednostavno prikaz -->
+      <p>Playlist: <a href="{{ playlist }}" target="_blank">{{ playlist }}</a></p>
+      <div style="margin-top:14px;">
+        <!-- Placeholder: u praksi bi ubacio video.js + HLS -->
+        <p style="color:#ccc">Ovdje bi stajao ugrađeni player (HLS / m3u8). Otvori playlist link ili integriraj video.js.</p>
+      </div>
+    {% else %}
+      <p class="muted">Ovaj MAC nije plaćen — nema pristup.</p>
+      <p><a href="/">Vrati se i aktiviraj</a></p>
+    {% endif %}
   </div>
-
-  <script>
-    async function loadPlaylist() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const mac = urlParams.get("mac");
-
-      if (!mac) {
-        alert("MAC adresa nije pronađena!");
-        return;
-      }
-
-      const res = await fetch(`/get_playlist?mac=${mac}`);
-      const data = await res.json();
-
-      if (data.playlist) {
-        document.getElementById("video-source").src = data.playlist;
-        const player = videojs("my-video");
-        player.src({ src: data.playlist, type: "application/x-mpegURL" });
-        player.play();
-      } else {
-        alert("Playlist nije pronađen za ovaj MAC.");
-      }
-    }
-
-    loadPlaylist();
-  </script>
-</body>
-</html>
-
 </body>
 </html>
