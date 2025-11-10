@@ -1,3 +1,3 @@
-@app.route('/test')
-def test():
-    return "Test stranica"
+@app.route('/')
+def home():
+    ...
