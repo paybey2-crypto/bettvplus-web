@@ -13,4 +13,6 @@
 2. Instaliraj dependency:
    ```bash
    pip install -r requirements.txt
+gunicorn app:app   
+   
 
