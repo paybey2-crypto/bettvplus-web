@@ -1,6 +1,4 @@
-from flask import Flask, render_template, request
 
-app = Flask(__name__)
 @app.route('/login', methods=['POST'])
 def login():
     mac = request.form.get('mac')
@@ -10,3 +8,5 @@ def login():
         return render_template('error.html', message="Nedostaju podaci za prijavu.")
 
     return render_template('success.html', mac=mac)
+    if __name__ == '__main__':
+    app.run(debug=True)
