@@ -1,4 +1,5 @@
-
+print("Primljen zahtjev za login")
+print("MAC:", mac, "CODE:", code)
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
