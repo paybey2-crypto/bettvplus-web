@@ -1,1 +1,73 @@
 
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BetTVPlus — Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg,#4d0f5a 0%, #14214f 100%); color:#fff; }
+    .card { background: rgba(0,0,0,0.5); border: none; }
+    .price-btn { margin-right:10px; }
+  </style>
+</head>
+<body>
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card p-4">
+        <h4>Dobrodošli</h4>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'danger' else ('warning' if category == 'warning' else 'success') }} text-dark">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <p><strong>MAC:</strong> {{ mac }}</p>
+        <p><strong>Device Key:</strong> {{ device_key }}</p>
+
+        <form method="post" action="#" id="playlist-form">
+          <div class="mb-3">
+            <label class="form-label">Playlist (URL ili sadržaj)</label>
+            <textarea class="form-control" name="playlist" rows="6">{{ playlist }}</textarea>
+          </div>
+          <button class="btn btn-light">Spremi playlist (nije implementirano u ovom primjeru)</button>
+        </form>
+
+        <hr class="my-4">
+
+        <h5>Aktivacija / Plaćanje</h5>
+        {% if active %}
+          <p class="text-success">Vaš MAC je aktivan do: {{ paid_until }}</p>
+        {% else %}
+          <p class="text-warning">Nije aktivno — možete odabrati jednu od opcija ispod.</p>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('create_checkout') }}">
+          <input type="hidden" name="mac" value="{{ mac }}">
+          <input type="hidden" name="device_key" value="{{ device_key }}">
+
+          <button class="btn btn-primary price-btn" name="product" value="lifetime">Lifetime — €11.77</button>
+          <button class="btn btn-outline-primary price-btn" name="product" value="yearly">1 Year — €7.77</button>
+        </form>
+
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h6>Info</h6>
+        <p>Trial: 7 dana besplatno za svaki novi MAC.</p>
+        <p>Stripe javni ključ: <small>{{ stripe_public_key or "Nije postavljen" }}</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
