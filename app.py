@@ -1,3 +1,11 @@
+from flask import Flask, render_template, request, redirect, jsonify
+import stripe, sqlite3
+
+app = Flask(__name__)  # ⬅️ ovo mora postojati!
+from flask import Flask, render_template, request, redirect, jsonify
+import stripe, sqlite3
+
+app = Flask(__name__)  # ⬅️ ovo mora postojati!
 @app.route("/create-checkout-session", methods=["POST"])
 def create_checkout_session():
     try:
