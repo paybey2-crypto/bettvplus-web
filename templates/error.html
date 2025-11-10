@@ -1,1 +1,36 @@
-
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greška</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #3a0ca3, #7209b7);
+            color: white;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .box {
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        }
+        a {
+            color: #ffd60a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Greška</h2>
+        <p>{{ message }}</p>
+        <p><a href="/">← Povratak na početnu</a></p>
+    </div>
+</body>
+</html>
