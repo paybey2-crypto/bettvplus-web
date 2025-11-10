@@ -1,8 +1,76 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bet TV Plus - Prijava</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #4B0082, #800080);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+        }
 
-<div style="margin-top: 20px; text-align: center;">
-    <a href="{{ url_for('static', filename='BETTVPLUS-PRO.apk') }}" 
-       download 
-       style="color: white; text-decoration: none; background-color: #9b4de0; padding: 10px 20px; border-radius: 8px; display: inline-block;">
-       📱 Preuzmi Bet TV Plus APK
-    </a>
-</div>
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #9b4dca;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #b76eff;
+        }
+
+        img {
+            width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo">
+
+    <div class="login-box">
+        <h2>Prijava</h2>
+        <form method="POST" action="/login">
+            <input type="text" name="mac" placeholder="Unesi MAC adresu" required><br>
+            <input type="password" name="pin" placeholder="Unesi PIN" required><br>
+            <button type="submit">Prijava</button>
+        </form>
+    </div>
+
+</body>
+</html>
