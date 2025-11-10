@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -8,70 +7,77 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom right, #4B0082, #800080);
-            color: white;
-            height: 100vh;
+            background: linear-gradient(to bottom right, #2e004f, #a32cc4, #c174f0);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
+            height: 100vh;
             margin: 0;
+            flex-direction: column;
         }
 
-        .login-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            width: 300px;
+        .logo {
+            margin-bottom: 30px;
             text-align: center;
         }
 
-        .login-box h2 {
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: white;
             margin-bottom: 20px;
         }
 
-        input[type="text"], input[type="password"] {
+        input {
             width: 90%;
             padding: 10px;
-            margin: 8px 0;
+            margin: 10px 0;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
+            font-size: 16px;
         }
 
         button {
-            background-color: #9b4dca;
+            width: 95%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #6b00b3;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
+            font-size: 16px;
         }
 
         button:hover {
-            background-color: #b76eff;
+            background-color: #8b00ff;
         }
 
         img {
             width: 200px;
-            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo">
+    </div>
 
-    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo">
-
-    <div class="login-box">
+    <div class="login-container">
         <h2>Prijava</h2>
         <form method="POST" action="/login">
-            <input type="text" name="mac" placeholder="Unesi MAC adresu" required><br>
-            <input type="password" name="pin" placeholder="Unesi PIN" required><br>
+            <input type="text" name="mac" placeholder="MAC adresa" required><br>
+            <input type="password" name="pin" placeholder="PIN" required><br>
             <button type="submit">Prijava</button>
         </form>
     </div>
-
 </body>
 </html>
