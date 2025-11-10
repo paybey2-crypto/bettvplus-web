@@ -4,73 +4,37 @@
   <meta charset="utf-8">
   <title>Bet TV Plus - Aktivacija</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background:#121212; color:#eee; font-family:Arial, sans-serif; text-align:center; padding:40px; }
-    .card{ background:#1f1f1f; max-width:520px; margin:20px auto; padding:28px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,.6); }
-    input{ width:100%; padding:12px 14px; margin:8px 0; border-radius:6px; border:1px solid #333; background:#222; color:#fff; }
-    button{ background:#f5c11b; border:none; padding:12px 18px; border-radius:8px; font-weight:700; cursor:pointer; }
-    h1{ color:#ffd54a; }
-    .note{ color:#bbb; margin-top:8px; }
+    body { background: linear-gradient(135deg,#2b0f3b, #2b2e6b); color: #fff; min-height:100vh; }
+    .card { background: rgba(0,0,0,0.45); border-radius:12px; }
+    .center { max-width: 700px; margin: 60px auto; }
+    label { font-weight:600; }
   </style>
-  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-  <h1>Bet TV Plus - Aktivacija</h1>
+  <div class="center">
+    <h1 class="mb-4">Bet TV Plus - Aktivacija</h1>
 
-  <div class="card">
-    <form id="activateForm">
-      <label>MAC adresa:</label>
-      <input type="text" id="mac" name="mac" placeholder="Unesi MAC..." required>
+    <div class="card p-4 mb-4">
+      <form action="/login" method="post">
+        <div class="mb-3">
+          <label>MAC adresa</label>
+          <input name="mac" class="form-control" placeholder="Unesi MAC...">
+        </div>
+        <div class="mb-3">
+          <label>Device Key (ako imaš)</label>
+          <input name="device_key" class="form-control" placeholder="Unesi device key (ako ga imaš)">
+        </div>
+        <button class="btn btn-warning">Prijava / Aktivacija</button>
+      </form>
+    </div>
 
-      <label>Main Playlist URL:</label>
-      <input type="text" id="playlist" name="playlist" placeholder="Unesi playlist URL..." required>
-
-      <div style="margin-top:14px">
-        <button type="submit">Kupi Lifetime (7.99€) i Aktiviraj</button>
-      </div>
-    </form>
-
-    <p class="note">Nakon uspješne kupovine, MAC će biti označen kao aktiviran.</p>
-    <div id="msg" style="margin-top:10px;color:#f88"></div>
+    <div class="card p-3">
+      <p>Ako je MAC novi - sustav će automatski generirati Device Key i dati ti 7 dana besplatno.</p>
+      <p>Za plaćanje koristimo Stripe. Ako trebaš, postavit ćemo i dodatne opcije.</p>
+    </div>
   </div>
-
-<script>
-const stripe = Stripe("{{ stripe_public_key }}");
-
-document.getElementById('activateForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const mac = document.getElementById('mac').value.trim();
-  const playlist = document.getElementById('playlist').value.trim();
-
-  if (!mac || !playlist) {
-    document.getElementById('msg').innerText = "Popuni MAC i playlist.";
-    return;
-  }
-
-  // Pošalji serveru da kreira checkout sesiju
-  const formData = new FormData();
-  formData.append('mac', mac);
-  formData.append('playlist', playlist);
-
-  const res = await fetch('/activate', {
-    method: 'POST',
-    body: formData
-  });
-
-  if (!res.ok) {
-    const txt = await res.text();
-    document.getElementById('msg').innerText = "Greška: " + txt;
-    return;
-  }
-
-  const data = await res.json();
-  const sessionId = data.id;
-  const { error } = await stripe.redirectToCheckout({ sessionId });
-  if (error) {
-    document.getElementById('msg').innerText = error.message;
-  }
-});
-</script>
 </body>
 </html>
 
