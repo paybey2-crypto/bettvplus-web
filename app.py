@@ -1,3 +1,1 @@
 @app.route('/')
-def home():
-    ...
