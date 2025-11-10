@@ -1,33 +1,54 @@
 <!doctype html>
 <html lang="hr">
 <head>
-  <meta charset="utf-8">
-  <title>Bet TV Plus - Player</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8"><title>Bet TV Plus - Player</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body{ background:#0f0f10; color:#fff; font-family:Arial, sans-serif; text-align:center; padding:30px; }
-    .box{ max-width:900px; margin:0 auto; background:#111; padding:20px; border-radius:8px; }
-    a{ color:#ffd54a; }
-    .muted{ color:#aaa; margin-top:8px;}
-    iframe, video{ width:100%; height:480px; background:#000; border-radius:6px; }
+    body { background: linear-gradient(180deg,#2b0f3b,#1b2340); color:#fff; }
+    .container { margin-top:30px; }
+    .player-box { background: rgba(0,0,0,0.55); padding:20px; border-radius:10px; }
+    .mac { font-family:monospace; }
   </style>
 </head>
 <body>
-  <h1>Bet TV Plus — Player</h1>
-  <div class="box">
-    <p>MAC: <strong>{{ mac }}</strong></p>
-    {% if paid %}
-      <p class="muted">Uređaj ima LIFETIME pristup.</p>
-      <!-- Ako je playlist URL direktni HLS (m3u8) možeš ubaciti video.js ili hls.js. Ovdje jednostavno prikaz -->
-      <p>Playlist: <a href="{{ playlist }}" target="_blank">{{ playlist }}</a></p>
-      <div style="margin-top:14px;">
-        <!-- Placeholder: u praksi bi ubacio video.js + HLS -->
-        <p style="color:#ccc">Ovdje bi stajao ugrađeni player (HLS / m3u8). Otvori playlist link ili integriraj video.js.</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 player-box">
+        <h3>Bet TV Plus - Player</h3>
+        <p>MAC: <span class="mac">{{mac}}</span> &nbsp; Device key: <span class="mac">{{device_key}}</span></p>
+
+        <form method="post" class="mb-3">
+          <div class="mb-2">
+            <label>Playlist URL</label>
+            <input name="playlist" value="{{playlist or ''}}" class="form-control" placeholder="Unesi playlist URL (M3U ili JSON)">
+          </div>
+          <button class="btn btn-success">Spremi playlist</button>
+        </form>
+
+        <div class="mt-3">
+          {% if playlist %}
+            <h5>Player preview</h5>
+            <p>Playlist: <a href="{{playlist}}" target="_blank" class="text-info">{{playlist}}</a></p>
+            <!-- Ovdje možeš integrirati video.js ili vivo-like player; za demo stavljamo placeholder -->
+            <div style="height:360px;background:#0d2b3a;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <button class="btn btn-outline-light">Play (preview)</button>
+            </div>
+          {% else %}
+            <p>Nema playlist-a. Unesi URL i klikni 'Spremi playlist'.</p>
+          {% endif %}
+        </div>
       </div>
-    {% else %}
-      <p class="muted">Ovaj MAC nije plaćen — nema pristup.</p>
-      <p><a href="/">Vrati se i aktiviraj</a></p>
-    {% endif %}
+
+      <div class="col-md-4">
+        <div class="card p-3">
+          <h5>Opcije</h5>
+          <p>Vrijeme triala: 7 dana (novo)</p>
+          <a href="/pay_prompt/{{mac}}" class="btn btn-warning">Plati / Aktiviraj</a>
+          <hr>
+          <p>Ako imaš pitanja: kontakt</p>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
