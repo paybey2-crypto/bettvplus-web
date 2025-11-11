@@ -1,130 +1,114 @@
-import os
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET", "change_this_secret")
+app.secret_key = "tajna_kljuc_za_sesije"
 
-DB_PATH = "database.db"
-APK_FILENAME = "BETTVPLUS-PRO.apk"   # stavi apk u static/
-
-# --- DB init ---
+# --- Baza ---
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS devices (
+    with sqlite3.connect("users.db") as conn:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            mac TEXT UNIQUE,
-            pin TEXT,
-            playlist TEXT,
-            created_at TEXT
+            username TEXT UNIQUE,
+            password TEXT,
+            dns_url TEXT,
+            active INTEGER DEFAULT 1
         )
-    ''')
-    conn.commit()
-    conn.close()
-
-def get_device(mac):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT id,mac,pin,playlist,created_at FROM devices WHERE mac = ?", (mac,))
-    row = c.fetchone()
-    conn.close()
-    return row
-
-def create_or_update_device(mac, pin):
-    now = datetime.utcnow().isoformat()
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    # try insert, if exists update pin
-    try:
-        c.execute("INSERT INTO devices (mac,pin,playlist,created_at) VALUES (?,?,?,?)",
-                  (mac, pin, "", now))
-    except sqlite3.IntegrityError:
-        c.execute("UPDATE devices SET pin = ? WHERE mac = ?", (pin, mac))
-    conn.commit()
-    conn.close()
-
-def save_playlist(mac, playlist_url):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("UPDATE devices SET playlist = ? WHERE mac = ?", (playlist_url, mac))
-    conn.commit()
-    conn.close()
-
+        """)
 init_db()
 
-# --- routes ---
-@app.route('/')
-def index():
-    return render_template('index.html')
+# --- Login zahtjev ---
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
 
-@app.route('/login', methods=['POST'])
+# --- Admin zahtjev ---
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if session.get("username") != "admin":
+            flash("Samo admin može pristupiti ovom dijelu.")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
+# --- Login stranica ---
+@app.route("/", methods=["GET", "POST"])
 def login():
-    mac = request.form.get('mac', '').strip().lower()
-    pin = request.form.get('pin', '').strip()
-    if not mac or not pin:
-        flash("Unesi MAC i PIN.", "danger")
-        return redirect(url_for('index'))
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        dns = request.form["dns"]
 
-    device = get_device(mac)
-    if device:
-        # device = (id, mac, pin, playlist, created_at)
-        stored_pin = device[2]
-        if stored_pin == pin:
-            return redirect(url_for('dashboard', mac=mac))
+        with sqlite3.connect("users.db") as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE username=? AND password=? AND active=1", (username, password))
+            user = cur.fetchone()
+
+        if user:
+            session["username"] = username
+            session["dns_url"] = dns
+            flash("Prijava uspješna!")
+            return redirect(url_for("player"))
         else:
-            flash("PIN nije točan.", "danger")
-            return redirect(url_for('index'))
-    else:
-        # create device with given pin and empty playlist
-        create_or_update_device(mac, pin)
-        flash("Novi uređaj je kreiran i PIN spremljen. Sada si prijavljen.", "success")
-        return redirect(url_for('dashboard', mac=mac))
+            flash("Neispravno korisničko ime, lozinka ili je račun blokiran.")
+            return redirect(url_for("login"))
 
-@app.route('/dashboard/<mac>', methods=['GET', 'POST'])
-def dashboard(mac):
-    mac = mac.strip().lower()
-    device = get_device(mac)
-    if not device:
-        flash("MAC nije pronađen. Prijavi se prvo.", "danger")
-        return redirect(url_for('index'))
+    return render_template("login.html")
 
-    if request.method == 'POST':
-        # spremi playlist
-        playlist = request.form.get('playlist', '').strip()
-        save_playlist(mac, playlist)
-        flash("Playlist je spremljen.", "success")
-        return redirect(url_for('dashboard', mac=mac))
+# --- Player stranica ---
+@app.route("/player")
+@login_required
+def player():
+    dns_url = session.get("dns_url", "")
+    return render_template("player.html", username=session["username"], dns_url=dns_url)
 
-    # GET: prikaži dashboard
-    playlist = device[3] or ""
-    return render_template('dashboard.html', mac=mac, playlist=playlist)
+# --- Admin panel ---
+@app.route("/admin")
+@admin_required
+def admin_panel():
+    with sqlite3.connect("users.db") as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id, username, dns_url, active FROM users")
+        users = cur.fetchall()
+    return render_template("admin.html", users=users)
 
-@app.route('/download')
-def download_apk():
-    static_dir = os.path.join(app.root_path, "static")
-    apk_path = os.path.join(static_dir, APK_FILENAME)
-    if not os.path.exists(apk_path):
-        return "APK datoteka nije pronađena u static/ folderu.", 404
-    return send_from_directory(static_dir, APK_FILENAME, as_attachment=True)
+# --- Blokiraj / Obriši korisnika ---
+@app.route("/toggle_user/<int:user_id>")
+@admin_required
+def toggle_user(user_id):
+    with sqlite3.connect("users.db") as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT active FROM users WHERE id=?", (user_id,))
+        status = cur.fetchone()[0]
+        new_status = 0 if status == 1 else 1
+        cur.execute("UPDATE users SET active=? WHERE id=?", (new_status, user_id))
+        conn.commit()
+    flash("Korisnik ažuriran.")
+    return redirect(url_for("admin_panel"))
 
-# simple admin: view devices (protected by simple key query param)
-@app.route('/admin', methods=['GET'])
-def admin():
-    key = request.args.get('key', '')
-    ADMIN_KEY = os.environ.get("ADMIN_KEY", "change_admin_key")
-    if key != ADMIN_KEY:
-        return "Access denied. Provide ?key=ADMIN_KEY", 403
+@app.route("/delete_user/<int:user_id>")
+@admin_required
+def delete_user(user_id):
+    with sqlite3.connect("users.db") as conn:
+        conn.execute("DELETE FROM users WHERE id=?", (user_id,))
+        conn.commit()
+    flash("Korisnik obrisan.")
+    return redirect(url_for("admin_panel"))
 
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT mac, pin, playlist, created_at FROM devices ORDER BY id DESC")
-    rows = c.fetchall()
-    conn.close()
-    return render_template('admin.html', devices=rows)
+# --- Odjava ---
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Odjavljeni ste.")
+    return redirect(url_for("login"))
 
-if __name__ == '__main__':
-    # useful for local debug
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+if __name__ == "__main__":
+    app.run(debug=True)
