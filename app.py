@@ -64,52 +64,15 @@ def player():
     return render_template('player.html', username=session['username'], dns_url=session['dns'])
 
 # Admin panel
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if 'username' not in session or session['username'] != 'admin':
         return redirect(url_for('login'))
+
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM users")
-    users = c.fetchall()
-    conn.close()
-    return render_template('admin.html', users=users)
 
-# Blokiraj / aktiviraj korisnika
-@app.route('/toggle_user/<int:user_id>')
-def toggle_user(user_id):
-    if 'username' not in session or session['username'] != 'admin':
-        return redirect(url_for('login'))
-    conn = sqlite3.connect('users.db')
-    c = conn.cursor()
-    c.execute("SELECT active FROM users WHERE id=?", (user_id,))
-    current = c.fetchone()
-    if current:
-        new_status = 0 if current[0] == 1 else 1
-        c.execute("UPDATE users SET active=? WHERE id=?", (new_status, user_id))
-        conn.commit()
-    conn.close()
-    return redirect(url_for('admin'))
-
-# Brisanje korisnika
-@app.route('/delete_user/<int:user_id>')
-def delete_user(user_id):
-    if 'username' not in session or session['username'] != 'admin':
-        return redirect(url_for('login'))
-    conn = sqlite3.connect('users.db')
-    c = conn.cursor()
-    c.execute("DELETE FROM users WHERE id=?", (user_id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('admin'))
-
-# Odjava
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    init_db()
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    if request.method == 'POST':
+        new_username = request.form['new_username']
+        new_password = request.form['new_password']
+        new_dns = request.form['new_dns
