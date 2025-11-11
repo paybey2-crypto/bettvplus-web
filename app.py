@@ -1,114 +1,115 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-from functools import wraps
+import os
 
 app = Flask(__name__)
-app.secret_key = "tajna_kljuc_za_sesije"
+app.secret_key = 'bettvplus_secret_key'
 
-# --- Baza ---
+# Kreiranje baze ako ne postoji
 def init_db():
-    with sqlite3.connect("users.db") as conn:
-        conn.execute("""
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             password TEXT,
-            dns_url TEXT,
+            dns TEXT,
             active INTEGER DEFAULT 1
         )
-        """)
-init_db()
+    ''')
+    conn.commit()
+    # dodaj admin korisnika ako ne postoji
+    c.execute("SELECT * FROM users WHERE username='admin'")
+    if not c.fetchone():
+        c.execute("INSERT INTO users (username, password, dns, active) VALUES (?, ?, ?, ?)",
+                  ('admin', 'admin123', '', 1))
+        conn.commit()
+    conn.close()
 
-# --- Login zahtjev ---
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "username" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return decorated
-
-# --- Admin zahtjev ---
-def admin_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if session.get("username") != "admin":
-            flash("Samo admin može pristupiti ovom dijelu.")
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return decorated
-
-# --- Login stranica ---
-@app.route("/", methods=["GET", "POST"])
+# Prijava korisnika
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        dns = request.form["dns"]
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        dns = request.form['dns']
 
-        with sqlite3.connect("users.db") as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM users WHERE username=? AND password=? AND active=1", (username, password))
-            user = cur.fetchone()
+        conn = sqlite3.connect('users.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        user = c.fetchone()
+        conn.close()
 
         if user:
-            session["username"] = username
-            session["dns_url"] = dns
-            flash("Prijava uspješna!")
-            return redirect(url_for("player"))
+            if user[4] == 0:
+                flash('Ovaj korisnik je blokiran.')
+                return redirect(url_for('login'))
+            session['username'] = username
+            session['dns'] = dns
+            if username == 'admin':
+                return redirect(url_for('admin'))
+            return redirect(url_for('player'))
         else:
-            flash("Neispravno korisničko ime, lozinka ili je račun blokiran.")
-            return redirect(url_for("login"))
+            flash('Neispravno korisničko ime ili lozinka.')
+            return redirect(url_for('login'))
+    return render_template('login.html')
 
-    return render_template("login.html")
-
-# --- Player stranica ---
-@app.route("/player")
-@login_required
+# Player stranica
+@app.route('/player')
 def player():
-    dns_url = session.get("dns_url", "")
-    return render_template("player.html", username=session["username"], dns_url=dns_url)
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('player.html', username=session['username'], dns_url=session['dns'])
 
-# --- Admin panel ---
-@app.route("/admin")
-@admin_required
-def admin_panel():
-    with sqlite3.connect("users.db") as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT id, username, dns_url, active FROM users")
-        users = cur.fetchall()
-    return render_template("admin.html", users=users)
+# Admin panel
+@app.route('/admin')
+def admin():
+    if 'username' not in session or session['username'] != 'admin':
+        return redirect(url_for('login'))
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM users")
+    users = c.fetchall()
+    conn.close()
+    return render_template('admin.html', users=users)
 
-# --- Blokiraj / Obriši korisnika ---
-@app.route("/toggle_user/<int:user_id>")
-@admin_required
+# Blokiraj / aktiviraj korisnika
+@app.route('/toggle_user/<int:user_id>')
 def toggle_user(user_id):
-    with sqlite3.connect("users.db") as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT active FROM users WHERE id=?", (user_id,))
-        status = cur.fetchone()[0]
-        new_status = 0 if status == 1 else 1
-        cur.execute("UPDATE users SET active=? WHERE id=?", (new_status, user_id))
+    if 'username' not in session or session['username'] != 'admin':
+        return redirect(url_for('login'))
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("SELECT active FROM users WHERE id=?", (user_id,))
+    current = c.fetchone()
+    if current:
+        new_status = 0 if current[0] == 1 else 1
+        c.execute("UPDATE users SET active=? WHERE id=?", (new_status, user_id))
         conn.commit()
-    flash("Korisnik ažuriran.")
-    return redirect(url_for("admin_panel"))
+    conn.close()
+    return redirect(url_for('admin'))
 
-@app.route("/delete_user/<int:user_id>")
-@admin_required
+# Brisanje korisnika
+@app.route('/delete_user/<int:user_id>')
 def delete_user(user_id):
-    with sqlite3.connect("users.db") as conn:
-        conn.execute("DELETE FROM users WHERE id=?", (user_id,))
-        conn.commit()
-    flash("Korisnik obrisan.")
-    return redirect(url_for("admin_panel"))
+    if 'username' not in session or session['username'] != 'admin':
+        return redirect(url_for('login'))
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM users WHERE id=?", (user_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('admin'))
 
-# --- Odjava ---
-@app.route("/logout")
+# Odjava
+@app.route('/logout')
 def logout():
     session.clear()
-    flash("Odjavljeni ste.")
-    return redirect(url_for("login"))
+    return redirect(url_for('login'))
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    init_db()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
