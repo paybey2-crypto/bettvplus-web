@@ -1,33 +1,32 @@
 
 <!doctype html>
-<html lang="hr">
+<html>
 <head>
   <meta charset="utf-8">
-  <title>BetTV Plus — Prijava</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+  <title>Bet TV Plus — Prijava</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="page">
-    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo" class="logo">
+  <div class="center">
+    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" class="logo" alt="Bet TV Plus">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash">{{ msg }}</div>
+        {% for cat, msg in messages %}
+          <div class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
       {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('login') }}" method="post" class="card">
+    <div class="card">
       <h2>Prijava</h2>
-      <input name="mac" placeholder="Unesi MAC adresu (npr. 59:d9:...)" required>
-      <input name="pin" placeholder="Unesi PIN" required>
-      <button type="submit">Prijava</button>
-    </form>
-
-    <p class="download-note">
-      <a href="{{ url_for('download_apk') }}">📲 Preuzmi BETTVPLUS-PRO.apk</a>
-    </p>
+      <form method="post">
+        <input name="mac" placeholder="Unesi MAC adresu" value="{{ mac|default('') }}">
+        <input name="pin" placeholder="Unesi PIN" type="password">
+        <input name="dns" placeholder="Unesi svoj DNS URL (npr. http://example.com/stream.m3u8)" value="{{ dns|default('') }}">
+        <button type="submit" class="btn">Prijavi se</button>
+      </form>
+      <p class="help">Ako želiš preuzeti APK: <a href="{{ url_for('download_apk') }}">Preuzmi BETTVPLUS-PRO.apk</a></p>
+    </div>
   </div>
 </body>
 </html>
