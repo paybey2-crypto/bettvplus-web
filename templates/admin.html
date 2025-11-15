@@ -1,62 +1,73 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>Bet TV Plus - Admin Panel</title>
-    <style>
-        body {
-            background-color: #0d0d0d;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        table {
-            width: 80%;
-            margin: 30px auto;
-            border-collapse: collapse;
-            background-color: #1a1a1a;
-        }
-        th, td {
-            border: 1px solid #333;
-            padding: 10px;
-        }
-        a {
-            color: #ff0000;
-            text-decoration: none;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Admin - BetTVPlus</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <h2>Admin Panel</h2>
+<body class="bg-dark">
+  <div class="admin">
+    <h2>Admin panel</h2>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <p style="color: #ff3333;">{{ messages[0] }}</p>
+        <ul class="flashes">
+          {% for m in messages %}
+            <li>{{ m }}</li>
+          {% endfor %}
+        </ul>
       {% endif %}
     {% endwith %}
 
+    <h3>Korisnici</h3>
     <table>
-        <tr>
-            <th>ID</th>
-            <th>Korisničko ime</th>
-            <th>DNS</th>
-            <th>Status</th>
-            <th>Akcije</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user[0] }}</td>
-            <td>{{ user[1] }}</td>
-            <td>{{ user[2] }}</td>
-            <td>{{ "Aktivan" if user[3] == 1 else "Blokiran" }}</td>
-            <td>
-                <a href="{{ url_for('toggle_user', user_id=user[0]) }}">Blokiraj / Aktiviraj</a> |
-                <a href="{{ url_for('delete_user', user_id=user[0]) }}">Obriši</a>
-            </td>
-        </tr>
-        {% endfor %}
+      <tr><th>ID</th><th>MAC</th><th>PIN</th><th>DNS</th><th>Active until</th><th>Blocked</th><th>Actions</th></tr>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.mac }}</td>
+        <td>{{ u.pin }}</td>
+        <td>{{ u.dns }}</td>
+        <td>{{ u.active_until or "-" }}</td>
+        <td>{{ "YES" if u.blocked else "NO" }}</td>
+        <td>
+          <a href="?key={{ key }}&a=activate7&id={{ u.id }}">7d</a> |
+          <a href="?key={{ key }}&a=activate1y&id={{ u.id }}">1y</a> |
+          <a href="?key={{ key }}&a=activatelife&id={{ u.id }}">life</a> |
+          {% if u.blocked %}
+            <a href="?key={{ key }}&a=unblock&id={{ u.id }}">unblock</a> |
+          {% else %}
+            <a href="?key={{ key }}&a=block&id={{ u.id }}">block</a> |
+          {% endif %}
+          <a href="?key={{ key }}&a=delete&id={{ u.id }}" onclick="return confirm('Del?')">delete</a>
+        </td>
+      </tr>
+      {% endfor %}
     </table>
 
-    <a href="{{ url_for('logout') }}">Odjavi se</a>
+    <h3>Dodaj korisnika</h3>
+    <form method="POST" action="?key={{ key }}">
+      <input type="hidden" name="action" value="add_user">
+      <input name="mac" placeholder="MAC" required>
+      <input name="pin" placeholder="PIN" required>
+      <input name="dns" placeholder="DNS">
+      <button type="submit">Dodaj</button>
+    </form>
+
+    <h3>Playlists</h3>
+    <form method="POST" enctype="multipart/form-data" action="?key={{ key }}">
+      <input type="hidden" name="action" value="upload_playlist">
+      <input type="file" name="playlist" required>
+      <input type="text" name="uploaded_by" placeholder="uploaded_by">
+      <button type="submit">Upload</button>
+    </form>
+
+    <ul>
+      {% for p in playlists %}
+        <li>{{ p.id }} - <a href="{{ url_for('serve_playlist', filename=p.filename) }}">{{ p.filename }}</a> ({{ p.uploaded_at }})</li>
+      {% endfor %}
+    </ul>
+
+  </div>
 </body>
 </html>
