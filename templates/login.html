@@ -1,67 +1,11 @@
+<h1>Admin Login</h1>
 
-<!DOCTYPE html>
-<html lang="hr">
-<head>
-    <meta charset="UTF-8">
-    <title>Bet TV Plus - Prijava</title>
-    <style>
-        body {
-            background-color: #0a0a0a;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-        .login-box {
-            background-color: #1c1c1c;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 0 15px #222;
-        }
-        input {
-            display: block;
-            width: 250px;
-            margin: 10px auto;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e60000;
-        }
-        img {
-            width: 120px;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-box">
-        <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" alt="Bet TV Plus Logo">
-        <h2>Prijava</h2>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <p style="color: #ff3333;">{{ messages[0] }}</p>
-          {% endif %}
-        {% endwith %}
-        <form method="post">
-            <input type="text" name="username" placeholder="Korisničko ime" required>
-            <input type="password" name="password" placeholder="Lozinka" required>
-            <input type="text" name="dns" placeholder="Unesite svoj DNS URL" required>
-            <button type="submit">Prijavi se</button>
-        </form>
-    </div>
-</body>
-</html>
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="post">
+    <input name="user" placeholder="Admin user">
+    <input name="pw" type="password" placeholder="Lozinka">
+    <button type="submit">Prijava</button>
+</form>
