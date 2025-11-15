@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: 0066ff;
+    background: #0066ff;
     font-family: Arial, sans-serif;
     color: #fff;
 
@@ -45,7 +45,7 @@ input::placeholder {
 
 button {
     width: 95%;
-    background: #ff5733;
+    background: #007bff;
     padding: 12px;
     border: none;
     border-radius: 6px;
@@ -55,7 +55,7 @@ button {
 }
 
 button:hover {
-    background:#007bff;
+    background:#005ed6;
 }
 
 .admin-link {
