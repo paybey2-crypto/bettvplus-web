@@ -1,40 +1,32 @@
 <!DOCTYPE html>
-<html lang="hr">
-<head>
-    <meta charset="UTF-8">
-    <title>BET TV Plus igrač</title>
+<html>
 
-    <!-- Ispravno učitavanje CSS-a -->
+<head>
+    <meta charset="utf-8">
+    <title>Bet TV Plus - Aktivacija MAC</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
 
-    <!-- Logo -->
-    <img src="{{ url_for('static', filename='bettvplus.png') }}"
-         style="width:330px; margin-top:40px;">
+    <div class="container">
 
-    <h2>Bet TV Plus igrač</h2>
+        <img src="/static/bettvplus.png" class="logo">
 
-    <!-- USERNAME/PASSWORD PLAYER -->
-    <form action="/play" method="GET">
-        <input type="text" name="username" placeholder="Unesi username" required><br>
-        <input type="text" name="password" placeholder="Unesi password" required><br>
-        <button type="submit">IGRAJ</button>
-    </form>
+        <h2>Aktivacija MAC adrese</h2>
 
-    <hr>
+        <form action="/mac" method="GET">
+            <input type="text" name="mac" placeholder="Unesi MAC adresu (npr. 00:1A:79:23:BC:55)" required>
 
-    <!-- MAC ADRESA -->
-    <form action="/mac" method="GET">
-        <input type="text" name="mac" placeholder="Unesi MAC adresu (npr. 00:1A:2B:3C:4D:5E)" required><br>
-        <button type="submit">Aktiviraj / Provjeri MAC</button>
-    </form>
+            <input type="text" name="code" placeholder="Unesi kod (ako ga imaš)">
+            
+            <button type="submit">Aktiviraj / Provjeri MAC</button>
+        </form>
 
-    <br>
+        <a href="/admin" class="admin-link">Administratorska ploča</a>
 
-    <!-- Admin panel -->
-    <a href="/admin">Administratorska ploča</a>
+    </div>
 
 </body>
+
 </html>
