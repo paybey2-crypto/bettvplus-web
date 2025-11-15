@@ -1,32 +1,56 @@
-
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Bet TV Plus — Prijava</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>BetTVPlus - Aktivacija</title>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-  <div class="center">
-    <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" class="logo" alt="Bet TV Plus">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for cat, msg in messages %}
-          <div class="flash {{ cat }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+  {% if error %}
+    <div style="color:red">{{ error }}</div>
+  {% endif %}
 
-    <div class="card">
-      <h2>Prijava</h2>
-      <form method="post">
-        <input name="mac" placeholder="Unesi MAC adresu" value="{{ mac|default('') }}">
-        <input name="pin" placeholder="Unesi PIN" type="password">
-        <input name="dns" placeholder="Unesi svoj DNS URL (npr. http://example.com/stream.m3u8)" value="{{ dns|default('') }}">
-        <button type="submit" class="btn">Prijavi se</button>
-      </form>
-      <p class="help">Ako želiš preuzeti APK: <a href="{{ url_for('download_apk') }}">Preuzmi BETTVPLUS-PRO.apk</a></p>
-    </div>
-  </div>
+  <h2>Prijava / Aktivacija</h2>
+  <form id="loginForm" method="post" action="/login">
+    <input name="mac" placeholder="Unesi MAC adresu" required>
+    <input name="pin" placeholder="Unesi PIN" required>
+    <input name="dns" placeholder="Unesi DNS URL (npr. http://...)" >
+    <button type="submit">Prijavi se</button>
+  </form>
+
+  <hr>
+  <h3>Aktiviraj MAC — plati</h3>
+  <form id="payForm">
+    <input id="mac_pay" name="mac" placeholder="MAC za aktivaciju">
+    <select id="package" name="package">
+      <option value="year">1 Year — €7.99</option>
+      <option value="lifetime">Lifetime — €11.99</option>
+    </select>
+    <button id="checkout">Plati</button>
+  </form>
+
+  <script>
+    const stripe = Stripe("{{ key }}");
+    document.getElementById("checkout").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const mac = document.getElementById("mac_pay").value.trim().toLowerCase();
+      const packageVal = document.getElementById("package").value;
+      if (!mac) { alert('Unesi MAC'); return; }
+
+      const res = await fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({mac: mac, package: packageVal})
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+      const sessionId = data.id;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      if (error) alert(error.message);
+    });
+  </script>
 </body>
 </html>
