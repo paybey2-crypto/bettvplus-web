@@ -1,4 +1,3 @@
 Flask>=2.2
-stripe>=10.0
+stripe>=5.0
 gunicorn
-
