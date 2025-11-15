@@ -1,114 +1,82 @@
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, session, abort
 import os
-import sqlite3
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = "BETTVPLUS_SECRET_2024"   # obavezno za session login
 
-# ------------------------------------
-# BAZA
-# ------------------------------------
-db = sqlite3.connect("users.db", check_same_thread=False)
-db.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    mac TEXT,
-    pin TEXT,
-    dns TEXT,
-    active_until TEXT,
-    blocked INTEGER
-)
-""")
-db.commit()
 
-# ------------------------------------
-# GLAVNA STRANICA
-# ------------------------------------
-@app.route('/')
-def index():
-    return "BetTVPlus server radi ✔️"
+# --------------------------
+#  TAJNI ADMIN LOGIN URL
+# --------------------------
 
-# ------------------------------------
-# ADMIN LOGIN
-# ------------------------------------
-ADMIN_USER = "BETPLUS-ADMIN-2024"
-ADMIN_PASS = "admin123"
+ADMIN_URL = "/admin-LIVNJAK1978"
+ADMIN_USER = "admin"
+ADMIN_PASS = "Livnjak1978@@"
 
-@app.route('/admin', methods=['GET', 'POST'])
+
+
+# LOGIN STRANICA
+@app.route(ADMIN_URL, methods=['GET', 'POST'])
 def admin_login():
-    if request.method == "POST":
-        user = request.form.get("username")
-        pw = request.form.get("password")
+    if request.method == 'POST':
+        user = request.form.get("user")
+        pw = request.form.get("pw")
 
         if user == ADMIN_USER and pw == ADMIN_PASS:
-            return redirect("/admin/dashboard")
+            session["admin"] = True
+            return redirect("/admin-panel")
 
-        return "Pogrešni podaci"
+        return render_template("admin_login.html", error="Pogrešni podaci!")
 
-    return """
-    <h2>Admin Login</h2>
-    <form method='POST'>
-        <input name='username' placeholder='Admin user'>
-        <input name='password' placeholder='Lozinka' type='password'>
-        <button type='submit'>Prijava</button>
-    </form>
-    """
+    return render_template("admin_login.html")
 
-# ------------------------------------
-# ADMIN DASHBOARD
-# ------------------------------------
-@app.route('/admin/dashboard')
-def admin_dashboard():
+
+
+# --------------------------
+# PRAVI ADMIN PANEL
+# --------------------------
+
+@app.route("/admin-panel")
+def admin_panel():
+    if not session.get("admin"):
+        return abort(403)
+
+    # učitaj sve korisnike iz baze
     users = db.execute("SELECT * FROM users").fetchall()
 
-    html = "<h2>ADMIN PANEL</h2>"
-    html += "<a href='/admin/new'>Dodaj korisnika</a><br><br>"
+    return render_template("admin_panel.html", users=users)
 
-    for u in users:
-        html += f"{u[1]} — {u[2]} — aktivan do {u[4]} <br>"
 
-    return html
 
-# ------------------------------------
-# FORMA ZA NOVOG KORISNIKA
-# ------------------------------------
-@app.route('/admin/new')
-def admin_new_user():
-    return """
-    <h2>Novi korisnik</h2>
-    <form action='/admin/upload' method='POST' enctype='multipart/form-data'>
-        <input name='mac' placeholder='MAC'><br>
-        <input name='pin' placeholder='PIN'><br>
-        <input name='dns' placeholder='DNS URL'><br>
-        <input type='file' name='playlist'><br><br>
-        <button type='submit'>Spremi</button>
-    </form>
-    """
+# --------------------------
+# UPLOAD PLAYLIST + USER
+# --------------------------
 
-# ------------------------------------
-# UPLOAD + SPREMANJE KORISNIKA
-# ------------------------------------
-@app.route('/admin/upload', methods=['POST'])
-def admin_upload():
+@app.route("/upload-user", methods=['POST'])
+def upload_user():
+    if not session.get("admin"):
+        return abort(403)
+
     mac = request.form.get("mac")
     pin = request.form.get("pin")
     dns = request.form.get("dns")
     file = request.files.get("playlist")
 
     if not (mac and pin and dns and file):
-        return "Nedostaju podaci", 400
+        return "Missing data", 400
 
-    # spremi playlistu
+    # spremi playlist
+    filename = secure_filename(file.filename)
+
     if not os.path.exists("playlists"):
         os.makedirs("playlists")
 
-    filename = secure_filename(file.filename)
-    save_path = os.path.join("playlists", filename)
-    file.save(save_path)
+    file.save(os.path.join("playlists", filename))
 
-    # aktivacija 7 dana
-    active_until = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M")
+    # dodaj korisnika u DB
+    active_until = datetime.now() + timedelta(days=7)
 
     db.execute(
         "INSERT INTO users (mac, pin, dns, active_until, blocked) VALUES (?, ?, ?, ?, ?)",
@@ -116,4 +84,4 @@ def admin_upload():
     )
     db.commit()
 
-    return redirect("/admin/dashboard")
+    return redirect("/admin-panel?msg=OK")
