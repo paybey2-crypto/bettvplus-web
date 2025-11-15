@@ -20,7 +20,7 @@ body {
 }
 
 .logo {
-    width: 140px;
+    width: 210px;
     margin-bottom: 25px;
 }
 
@@ -45,7 +45,7 @@ input::placeholder {
 
 button {
     width: 95%;
-    background: #ff3333;
+    background:0066ff;
     padding: 12px;
     border: none;
     border-radius: 6px;
