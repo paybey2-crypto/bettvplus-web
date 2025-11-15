@@ -1,87 +1,46 @@
-from flask import Flask, request, redirect, render_template, session, abort
+from flask import Flask, request, redirect, render_template, session
 import os
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = "BETTVPLUS_SECRET_2024"   # obavezno za session login
+app.secret_key = "BETTVPLUS_SECRET_2024"
 
-
-# --------------------------
-#  TAJNI ADMIN LOGIN URL
-# --------------------------
+# ---------------------------
+# TAJNI ADMIN LOGIN URL
+# ---------------------------
 
 ADMIN_URL = "/admin-LIVNJAK1978"
 ADMIN_USER = "admin"
 ADMIN_PASS = "Livnjak1978@@"
 
+# ---------------------------
+# ADMIN LOGIN
+# ---------------------------
 
-
-# LOGIN STRANICA
-@app.route(ADMIN_URL, methods=['GET', 'POST'])
+@app.route(ADMIN_URL, methods=["GET", "POST"])
 def admin_login():
-    if request.method == 'POST':
-        user = request.form.get("user")
-        pw = request.form.get("pw")
+    if request.method == "GET":
+        return render_template("admin_login.html")
 
-        if user == ADMIN_USER and pw == ADMIN_PASS:
-            session["admin"] = True
-            return redirect("/admin-panel")
+    # POST LOGIN
+    user = request.form.get("username")
+    password = request.form.get("password")
 
-        return render_template("admin_login.html", error="Pogrešni podaci!")
+    if user == ADMIN_USER and password == ADMIN_PASS:
+        session["admin"] = True
+        return redirect("/admin-panel")
 
-    return render_template("admin_login.html")
+    return "Pogrešan login", 403
 
 
-
-# --------------------------
-# PRAVI ADMIN PANEL
-# --------------------------
+# ---------------------------
+# ADMIN PANEL
+# ---------------------------
 
 @app.route("/admin-panel")
 def admin_panel():
     if not session.get("admin"):
-        return abort(403)
+        return redirect(ADMIN_URL)
 
-    # učitaj sve korisnike iz baze
-    users = db.execute("SELECT * FROM users").fetchall()
-
-    return render_template("admin_panel.html", users=users)
-
-
-
-# --------------------------
-# UPLOAD PLAYLIST + USER
-# --------------------------
-
-@app.route("/upload-user", methods=['POST'])
-def upload_user():
-    if not session.get("admin"):
-        return abort(403)
-
-    mac = request.form.get("mac")
-    pin = request.form.get("pin")
-    dns = request.form.get("dns")
-    file = request.files.get("playlist")
-
-    if not (mac and pin and dns and file):
-        return "Missing data", 400
-
-    # spremi playlist
-    filename = secure_filename(file.filename)
-
-    if not os.path.exists("playlists"):
-        os.makedirs("playlists")
-
-    file.save(os.path.join("playlists", filename))
-
-    # dodaj korisnika u DB
-    active_until = datetime.now() + timedelta(days=7)
-
-    db.execute(
-        "INSERT INTO users (mac, pin, dns, active_until, blocked) VALUES (?, ?, ?, ?, ?)",
-        (mac, pin, dns, active_until, 0)
-    )
-    db.commit()
-
-    return redirect("/admin-panel?msg=OK")
+    return render_template("admin_panel.html")
