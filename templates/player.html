@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BETTVPLUS Player</title>
+    <title>Player</title>
 </head>
 <body style="background:black;color:white;text-align:center;">
-    <h2>Učitavanje streama...</h2>
 
-    <video width="100%" height="auto" controls autoplay>
-        <source src="{{ stream_url }}" type="application/vnd.apple.mpegurl">
-        <source src="{{ stream_url }}" type="video/mp2t">
-        Vaš preglednik ne podržava video tag.
-    </video>
+<h2>Učitavanje streama...</h2>
+
+<video width="100%" controls autoplay>
+    <source src="{{ stream_url }}" type="application/vnd.apple.mpegurl">
+    <source src="{{ stream_url }}" type="video/mp2t">
+    Vaš preglednik ne podržava video tag.
+</video>
+
 </body>
 </html>
