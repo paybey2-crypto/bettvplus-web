@@ -1,4 +1,3 @@
-
 @app.route('/admin/upload', methods=['POST'])
 def admin_upload():
     mac = request.form.get("mac")
