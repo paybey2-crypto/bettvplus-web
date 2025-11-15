@@ -1,36 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Admin Login</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Panel</h1>
 
-        {% if not logged_in %}
-        <form action="/admin-LIVNJAK1978" method="post">
-            <input type="password" name="password" placeholder="Admin Password" required>
-            <button type="submit">Login</button>
-        </form>
-        {% else %}
+<h2>Admin Login</h2>
 
-        <h2>Dodaj ili Promijeni TV Stream</h2>
+<form method="POST">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br><br>
 
-        <form action="/admin-LIVNJAK1978" method="post">
-            <input type="text" name="new_stream" placeholder="Unesi novi stream URL" required>
-            <button type="submit">Spremi</button>
-        </form>
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
 
-        <p>Trenutni stream:</p>
-        <code>{{ current_stream }}</code>
+    <button type="submit">Login</button>
+</form>
 
-        <br><br>
-        <a href="/">Nazad na player</a>
-
-        {% endif %}
-    </div>
 </body>
 </html>
