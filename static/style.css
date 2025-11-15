@@ -1,59 +1,7 @@
-body {
-    background: #e7eef6; /* svijetlo plava pozadina */
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.container {
-    background: white;
-    padding: 40px;
-    width: 380px;
-    border-radius: 12px;
-    box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
 .logo {
-    width: 80px;
-    margin-bottom: 15px;
-
-    /* PLAVA POZADINA IZA LOGA */
-    background: #1e7ddb;
-    padding: 10px;
-    border-radius: 12px;
-}
-
-h1 {
+    width: 140px;   /* povecano */
     margin-bottom: 25px;
-    color: #333;
-}
-
-input {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-
-    /* PLAVA BOJA DUGMETA */
-    background: #1e7ddb;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #1663ad;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
