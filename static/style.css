@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background: linear-gradient(to bottom, #7db9ff, #ffffff);
+    background: #000000;     /* CRNA POZADINA */
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,16 +10,16 @@ body {
 }
 
 .login-box {
-    background: #ffffffee;
+    background: #1a1a1a;     /* tamno siva/black box */
     padding: 40px;
     width: 350px;
     border-radius: 18px;
     text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
 
 .logo-container {
-    background: #1e6cff;     /* plava pozadina iza loga */
+    background: #1e6cff;     /* plava pozadina za logo */
     padding: 25px;
     border-radius: 20px;
     display: inline-block;
@@ -27,14 +27,13 @@ body {
 }
 
 .logo {
-    width: 90px;             /* veći logo */
+    width: 90px;
     height: auto;
 }
 
 h1 {
     margin-bottom: 25px;
-    color: #333;
-    font-size: 26px;
+    color: #ffffff;          /* bijeli tekst */
 }
 
 form input {
@@ -43,8 +42,12 @@ form input {
     margin-bottom: 15px;
     border: none;
     border-radius: 10px;
-    background: #f0f0f0;
-    font-size: 15px;
+    background: #333333;     /* tamno polje */
+    color: #ffffff;          /* bijeli tekst */
+}
+
+form input::placeholder {
+    color: #bbbbbb;          /* svijetlo siva */
 }
 
 button {
