@@ -1,63 +1,12 @@
-body {
-    margin: 0;
-    padding: 0;
-    background: #000; /* CRNA POZADINA */
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: #fff;
-}
-
-/* GLASS CARD */
-.container {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 40px;
-    border-radius: 25px;
-    text-align: center;
-    width: 380px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-}
-
-/* LOGO – veliki i čist */
-.logo {
-    width: 250px; /* MOŽEŠ POVIĆI NA 250 AKO ŽELIŠ */
-    height: auto;
-    margin-bottom: 25px;
-}
-
-/* NASLOV */
-h1 {
-    margin-bottom: 25px;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-/* INPUT POLJA */
-input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-}
-
-/* GUMB */
-button {
-    width: 100%;
-    padding: 14px;
-    background: #1e6cff;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 17px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0057d8;
-}
+body { font-family: Arial, Helvetica, sans-serif; margin:0; padding:0; background:#111; color:#ddd; }
+.bg-dark { background: linear-gradient(#121416, #1b1b1b); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+.box { width:420px; background:linear-gradient(180deg,#222 0%, #1a1a1a 100%); padding:34px; border-radius:10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); text-align:center; }
+.logo { width:140px; height:140px; object-fit:contain; margin:0 auto 10px auto; display:block; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6)); }
+.box h1 { margin:8px 0 18px 0; color:#fff; font-weight:600; }
+.box input { width:100%; padding:12px 10px; margin:8px 0; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:#eee; }
+.box button { width:100%; padding:12px; border-radius:8px; border:none; background:linear-gradient(#18a2e8,#0b93db); color:white; font-weight:600; cursor:pointer; }
+.admin { width:950px; padding:20px; background:transparent; color:#eee; }
+table { width:100%; border-collapse:collapse; margin-bottom:12px; color:#ddd; }
+table th, table td { padding:6px 8px; border-bottom:1px solid rgba(255,255,255,0.04); text-align:left; }
+.flashes { list-style:none; padding:0; }
+.flashes li { background:#1e8b3a; color:white; padding:6px 8px; display:inline-block; border-radius:6px; margin-bottom:8px; }
