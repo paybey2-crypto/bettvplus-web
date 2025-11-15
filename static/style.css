@@ -1,66 +1,63 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
-    background: #000000;     /* CRNA POZADINA */
-    height: 100vh;
+    background: #000; /* CRNA POZADINA */
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
+    color: #fff;
 }
 
-.login-box {
-    background: #1a1a1a;     /* tamno siva/black box */
+/* GLASS CARD */
+.container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 40px;
-    width: 350px;
-    border-radius: 18px;
+    border-radius: 25px;
     text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    width: 380px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
 }
 
-.logo-container {
-    background: #1e6cff;     /* plava pozadina za logo */
-    padding: 25px;
-    border-radius: 20px;
-    display: inline-block;
-    margin-bottom: 20px;
-}
-
+/* LOGO – veliki i čist */
 .logo {
-    width: 250px;
+    width: 200px; /* MOŽEŠ POVIĆI NA 250 AKO ŽELIŠ */
     height: auto;
+    margin-bottom: 25px;
 }
 
+/* NASLOV */
 h1 {
     margin-bottom: 25px;
-    color: #ffffff;          /* bijeli tekst */
+    font-size: 28px;
+    font-weight: bold;
 }
 
-form input {
+/* INPUT POLJA */
+input {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     margin-bottom: 15px;
     border: none;
     border-radius: 10px;
-    background: #333333;     /* tamno polje */
-    color: #ffffff;          /* bijeli tekst */
+    font-size: 15px;
 }
 
-form input::placeholder {
-    color: #bbbbbb;          /* svijetlo siva */
-}
-
+/* GUMB */
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background: #1e6cff;
     border: none;
     border-radius: 10px;
     color: white;
-    font-size: 16px;
+    font-size: 17px;
     cursor: pointer;
 }
 
 button:hover {
-    background: #0d52d9;
+    background: #0057d8;
 }
