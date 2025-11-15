@@ -1,50 +1,63 @@
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #d9e6ff, #ffffff);
-    text-align: center;
     margin: 0;
     padding: 0;
+    font-family: sans-serif;
+    background: linear-gradient(to bottom, #7db9ff, #ffffff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.container {
-    width: 380px;
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin: 100px auto;
-    box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
+.login-box {
+    background: #ffffffee;
+    padding: 40px;
+    width: 350px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-.logo {
-    width: 120px;
-    margin-bottom: 10px;
-}
-
-h1 {
+.logo-container {
+    background: #1e6cff;     /* plava pozadina iza loga */
+    padding: 25px;
+    border-radius: 20px;
+    display: inline-block;
     margin-bottom: 20px;
 }
 
-input {
-    width: 90%;
+.logo {
+    width: 90px;             /* veći logo */
+    height: auto;
+}
+
+h1 {
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 26px;
+}
+
+form input {
+    width: 100%;
     padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #f2f4f7;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #f0f0f0;
     font-size: 15px;
 }
 
 button {
-    width: 95%;
+    width: 100%;
     padding: 12px;
-    background: #0084ff;
-    color: white;
+    background: #1e6cff;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
+    color: white;
     font-size: 16px;
     cursor: pointer;
 }
 
 button:hover {
-    background: #006ed6;
+    background: #0d52d9;
 }
