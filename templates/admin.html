@@ -1,73 +1,18 @@
-<!doctype html>
-<html lang="hr">
-<head>
-  <meta charset="utf-8">
-  <title>Admin - BetTVPlus</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body class="bg-dark">
-  <div class="admin">
-    <h2>Admin panel</h2>
+<h2>Dodaj korisnika + Upload playlist</h2>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for m in messages %}
-            <li>{{ m }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+<form action="/admin/upload" method="POST" enctype="multipart/form-data">
 
-    <h3>Korisnici</h3>
-    <table>
-      <tr><th>ID</th><th>MAC</th><th>PIN</th><th>DNS</th><th>Active until</th><th>Blocked</th><th>Actions</th></tr>
-      {% for u in users %}
-      <tr>
-        <td>{{ u.id }}</td>
-        <td>{{ u.mac }}</td>
-        <td>{{ u.pin }}</td>
-        <td>{{ u.dns }}</td>
-        <td>{{ u.active_until or "-" }}</td>
-        <td>{{ "YES" if u.blocked else "NO" }}</td>
-        <td>
-          <a href="?key={{ key }}&a=activate7&id={{ u.id }}">7d</a> |
-          <a href="?key={{ key }}&a=activate1y&id={{ u.id }}">1y</a> |
-          <a href="?key={{ key }}&a=activatelife&id={{ u.id }}">life</a> |
-          {% if u.blocked %}
-            <a href="?key={{ key }}&a=unblock&id={{ u.id }}">unblock</a> |
-          {% else %}
-            <a href="?key={{ key }}&a=block&id={{ u.id }}">block</a> |
-          {% endif %}
-          <a href="?key={{ key }}&a=delete&id={{ u.id }}" onclick="return confirm('Del?')">delete</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
+    <label>MAC:</label><br>
+    <input type="text" name="mac" required><br><br>
 
-    <h3>Dodaj korisnika</h3>
-    <form method="POST" action="?key={{ key }}">
-      <input type="hidden" name="action" value="add_user">
-      <input name="mac" placeholder="MAC" required>
-      <input name="pin" placeholder="PIN" required>
-      <input name="dns" placeholder="DNS">
-      <button type="submit">Dodaj</button>
-    </form>
+    <label>PIN:</label><br>
+    <input type="text" name="pin" required><br><br>
 
-    <h3>Playlists</h3>
-    <form method="POST" enctype="multipart/form-data" action="?key={{ key }}">
-      <input type="hidden" name="action" value="upload_playlist">
-      <input type="file" name="playlist" required>
-      <input type="text" name="uploaded_by" placeholder="uploaded_by">
-      <button type="submit">Upload</button>
-    </form>
+    <label>DNS:</label><br>
+    <input type="text" name="dns" required><br><br>
 
-    <ul>
-      {% for p in playlists %}
-        <li>{{ p.id }} - <a href="{{ url_for('serve_playlist', filename=p.filename) }}">{{ p.filename }}</a> ({{ p.uploaded_at }})</li>
-      {% endfor %}
-    </ul>
+    <label>Playlist file:</label><br>
+    <input type="file" name="playlist" required><br><br>
 
-  </div>
-</body>
-</html>
+    <button type="submit">Upload</button>
+</form>
