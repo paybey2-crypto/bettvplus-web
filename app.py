@@ -1,3 +1,14 @@
+from flask import Flask, request, redirect, render_template
+import os
+from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__)   # <--- OVO mora biti prije svih @app.route
+
+# ---------------------------
+# RUTE
+# ---------------------------
+
 @app.route('/admin/upload', methods=['POST'])
 def admin_upload():
     mac = request.form.get("mac")
@@ -8,13 +19,17 @@ def admin_upload():
     if not (mac and pin and dns and file):
         return "Missing data", 400
 
-    # 1️⃣ Spremi playlist fajl
+    # spremi playlist
     filename = secure_filename(file.filename)
-    file.save(os.path.join("playlists", filename))
+    save_path = os.path.join("playlists", filename)
 
-    # 2️⃣ Dodaj korisnika u bazu (aktivacija 7 dana)
+    if not os.path.exists("playlists"):
+        os.makedirs("playlists")
+
+    file.save(save_path)
+
+    # spremi korisnika (ovisno o tvojoj DB strukturi)
     active_until = datetime.now() + timedelta(days=7)
-
     db.execute(
         "INSERT INTO users (mac, pin, dns, active_until, blocked) VALUES (?, ?, ?, ?, ?)",
         (mac, pin, dns, active_until, 0)
