@@ -1,3 +1,4 @@
+app = Flask(__name__, static_folder='static', template_folder='templates')
 # app.py
 import os
 import sqlite3
