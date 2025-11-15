@@ -1,7 +1,64 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #bcd7ff, #ffffff); /* lagana plava pozadina */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #fafafa;  /* lagano sivo */
+    padding: 40px;
+    width: 380px;
+    border-radius: 18px;
+    box-shadow: 0px 6px 25px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
 .logo {
-    width: 140px;   /* povecano */
+    width: 140px;          /* veći logo */
     margin-bottom: 25px;
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+h1 {
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 26px;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #b5b5b5;
+    font-size: 15px;
+    background: #f0f0f0;  /* siva polja */
+}
+
+input:focus {
+    outline: none;
+    border-color: #1e7ddb;
+    background: #e8f2ff;  /* plava na focus */
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1e90ff;  /* lijepa plava */
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #0077e6;
 }
