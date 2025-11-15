@@ -1,74 +1,28 @@
-<!doctype html>
-<html lang="hr">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>bettvplus-player</title>
-  <link rel="stylesheet" href="/static/css/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bettvplus-player</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/">
-        <img src="/static/images/logo.png" alt="bettvplus logo" class="logo-img" />
-        <span class="sr-only">bettvplus-player</span>
-      </a>
+<body class="dark-bg">
 
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-        ☰
-      </button>
+<div class="center-box">
+    <img src="/static/logo.png" alt="logo" class="logo">
 
-      <nav class="site-nav" id="nav">
-        <a href="#" class="nav-link">Home</a>
-        <a href="#manage" class="nav-link">Manage Playlists</a>
-        <a href="#activate" class="nav-link">Activate</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </nav>
-    </div>
-  </header>
+    <h1 class="title">bettvplus-player</h1>
 
-  <main class="hero">
-    <div class="hero-inner container">
-      <div class="hero-card">
-        <!-- Big logo inside card (optional) -->
-        <div class="card-logo-wrap">
-          <img src="/static/images/logo.png" alt="bettvplus logo" class="card-logo" />
-        </div>
+    <form action="/login" method="POST" class="login-form">
+        <label>MAC Address</label>
+        <input type="text" name="mac" placeholder="00:1A:79:AB:CD:EF" required>
 
-        <h1 class="hero-title">MANAGE YOUR PLAYLISTS</h1>
-        <p class="hero-sub">Do it simply wherever you go</p>
+        <label>Device Key</label>
+        <input type="password" name="device_key" placeholder="Your access key" required>
 
-        <!-- Login form (MAC + Device Key) -->
-        <form class="login-form" method="POST" action="/login">
-          <label class="input-label">
-            <input name="mac" type="text" placeholder="Mac address" required />
-          </label>
+        <button type="submit" class="btn-primary">Login</button>
+    </form>
+</div>
 
-          <label class="input-label">
-            <input name="device_key" type="text" placeholder="Device Key" required />
-          </label>
-
-          <button class="btn-primary" type="submit">LOGIN</button>
-        </form>
-
-        <p class="small-note">Need to upload playlist? Admin panel for uploads is private.</p>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small>© bettvplus-player</small>
-    </div>
-  </footer>
-
-  <script>
-    // simple mobile menu toggle
-    const menuToggle = document.getElementById('menuToggle');
-    const nav = document.getElementById('nav');
-    menuToggle.addEventListener('click', ()=> {
-      nav.classList.toggle('open');
-    });
-  </script>
 </body>
 </html>
