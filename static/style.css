@@ -20,7 +20,7 @@ body {
 }
 
 .logo {
-    width: 210px;
+    width: 230px;
     margin-bottom: 25px;
 }
 
@@ -55,7 +55,7 @@ button {
 }
 
 button:hover {
-    background:000000;
+    background:0066ff;
 }
 
 .admin-link {
