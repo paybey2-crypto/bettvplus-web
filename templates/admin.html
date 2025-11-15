@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
 
+        {% if not logged_in %}
+        <form action="/admin-LIVNJAK1978" method="post">
+            <input type="password" name="password" placeholder="Admin Password" required>
+            <button type="submit">Login</button>
+        </form>
+        {% else %}
+
+        <h2>Dodaj ili Promijeni TV Stream</h2>
+
+        <form action="/admin-LIVNJAK1978" method="post">
+            <input type="text" name="new_stream" placeholder="Unesi novi stream URL" required>
+            <button type="submit">Spremi</button>
+        </form>
+
+        <p>Trenutni stream:</p>
+        <code>{{ current_stream }}</code>
+
+        <br><br>
+        <a href="/">Nazad na player</a>
+
+        {% endif %}
+    </div>
+</body>
+</html>
