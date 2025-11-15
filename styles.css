@@ -1,1 +1,49 @@
+body {
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 40px;
+}
 
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: auto;
+}
+
+.logo {
+    width: 180px;
+    margin-bottom: 20px;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+}
+
+input {
+    background: #222;
+    color: white;
+}
+
+button {
+    background: #1e4db7;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #3169f3;
+}
+
+.admin-link {
+    display: block;
+    margin-top: 30px;
+    color: #1e4db7;
+    font-size: 18px;
+}
