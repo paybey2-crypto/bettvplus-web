@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BETTVPLUS Player</title>
+    <title>BETTVPLUS igrač</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="container">
-        <img src="/static/logo.png" class="logo" alt="Logo">
 
-        <h1>BETTVPLUS Player</h1>
+<img src="/static/logo.png" style="width:120px;margin-top:40px;">
 
-        <form action="/play" method="post">
-            <input type="text" name="channel" placeholder="Enter Channel Name/URL" required>
-            <button type="submit">PLAY</button>
-        </form>
+<h2>BETTVPLUS igrač</h2>
 
-        <a class="admin-link" href="/admin-LIVNJAK1978">Admin Panel</a>
-    </div>
+<form action="/play" method="GET">
+    <input type="text" name="username" placeholder="Unesi username" required><br>
+    <input type="text" name="password" placeholder="Unesi password" required><br>
+
+    <button type="submit">IGRAJ</button>
+</form>
+
+<a href="/admin">Administratorska ploča</a>
+
 </body>
 </html>
