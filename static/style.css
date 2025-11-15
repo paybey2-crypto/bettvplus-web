@@ -1,51 +1,59 @@
 body {
-    margin: 0;
-    padding: 0;
-    background: #f3f3f3;
+    background: #e7eef6; /* svijetlo plava pozadina */
     font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
 .container {
-    width: 100%;
-    max-width: 420px;
-    margin: 60px auto;
     background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    padding: 40px;
+    width: 380px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
     text-align: center;
 }
 
 .logo {
-    width: 150px;
-    margin-bottom: 20px;
+    width: 80px;
+    margin-bottom: 15px;
+
+    /* PLAVA POZADINA IZA LOGA */
+    background: #1e7ddb;
+    padding: 10px;
+    border-radius: 12px;
 }
 
-h2 {
-    margin-bottom: 20px;
+h1 {
+    margin-bottom: 25px;
+    color: #333;
 }
 
-form input {
+input {
     width: 100%;
+    margin-bottom: 15px;
     padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #aaa;
-    border-radius: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
     font-size: 15px;
 }
 
 button {
     width: 100%;
     padding: 12px;
-    background: #b22323;
     border: none;
+    border-radius: 8px;
+
+    /* PLAVA BOJA DUGMETA */
+    background: #1e7ddb;
     color: white;
-    font-size: 17px;
-    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 button:hover {
-    background: #d12c2c;
+    background: #1663ad;
 }
