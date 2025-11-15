@@ -1,19 +1,25 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-<meta charset="UTF-8" />
-<title>BetTVPlus – Prijava</title>
-<link rel="stylesheet" href="/static/style.css" />
+    <meta charset="UTF-8">
+    <title>BetTVPlus – Prijava</title>
+
+    <!-- PRAVILAN CSS LINK -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-<div class="container">
-    <img src="/static/logo.png" class="logo" />
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
 
-    <h1>Prijava</h1>
+        <h1>Prijava</h1>
 
-    <form method="POST" action="/login">
-        <input name="mac" placeholder="Unesi MAC adresu" required />
-        <input name="pin" placeholder="Unesi PIN" required />
-        <input name="dns" placeholder="Unesi DNS URL" required />
-        <button type="submit">Prijavi se
+        <form method="POST" action="/login">
+            <input name="mac" placeholder="Unesi MAC adresu" required />
+            <input name="pin" placeholder="Unesi PIN" required />
+            <input name="dns" placeholder="Unesi DNS URL" required />
+            <button type="submit">Prijavi se</button>
+        </form>
+    </div>
+</body>
+</html>
