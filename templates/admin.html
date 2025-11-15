@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Admin Panel</title>
-</head>
+<head><meta charset="utf-8"><title>Admin</title></head>
 <body>
-
-<h2>Dobrodošli u Admin Panel!</h2>
-<p>Ovdje možete dodavati stvari kasnije.</p>
-
-<a href="/">Nazad</a>
-
+    <h1>Dobrodošli u Admin Panel!</h1>
+    <p>Ovdje možete pregledati MAC adrese</p>
+    <table border="1" cellpadding="6">
+        <tr><th>MAC</th><th>Status</th><th>Start</th><th>End</th></tr>
+        {% for r in rows %}
+        <tr>
+            <td>{{ r[0] }}</td>
+            <td>{{ r[1] }}</td>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p><a href="/">Nazad</a></p>
 </body>
 </html>
