@@ -1,26 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>BetTVPlus – Prijava</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="utf-8">
+  <title>BetTVPlus - Prijava</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-
-<div class="login-box">
-    <div class="logo-container">
-        <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" class="logo">
-    </div>
-
+<body class="bg-dark">
+  <div class="box">
+    <img src="{{ url_for('static', filename='logo-no-bg.png') }}" class="logo" alt="logo">
     <h1>Prijava</h1>
-
     <form method="POST" action="/login">
-        <input name="mac" placeholder="Unesi MAC adresu" required />
-        <input name="pin" placeholder="Unesi PIN" required />
-        <input name="dns" placeholder="Unesi DNS URL" required />
-        <button type="submit">Prijavi se</button>
+      <input name="mac" placeholder="Unesi MAC adresu" required/>
+      <input name="pin" placeholder="Unesi PIN" required/>
+      <input name="dns" placeholder="Unesi DNS URL" required/>
+      <button type="submit">Prijavi se</button>
     </form>
-</div>
-
+    <p style="font-size:12px;color:#aaa;margin-top:12px;">Admin: <small>skriveni /admin?key=BETPLUS-ADMIN-2024</small></p>
+  </div>
 </body>
 </html>
