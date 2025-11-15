@@ -1,14 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="hr">
+
 <head>
     <meta charset="UTF-8">
     <title>BetTVPlus – Prijava</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
 </head>
+
 <body>
 
 <div class="container">
+
     <img src="{{ url_for('static', filename='BETTVPLUS-PRO.png') }}" class="logo">
 
     <h1>Prijava</h1>
@@ -19,6 +21,7 @@
         <input name="dns" placeholder="Unesi DNS URL" required />
         <button type="submit">Prijavi se</button>
     </form>
+
 </div>
 
 </body>
