@@ -1,114 +1,56 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>BET TV PLUS Aktivacija</title>
-    <script src="https://js.stripe.com/v3/"></script>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            font-family: Arial, sans-serif;
-            color: #fff;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .box {
-            width: 380px;
-            background: rgba(0, 0, 0, 0.55);
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .logo {
-            width: 240px;
-            margin-bottom: 25px;
-        }
-
-        h1 {
-            font-size: 22px;
-            margin-bottom: 25px;
-        }
-
-        input {
-            width: 90%;
-            padding: 12px;
-            border-radius: 6px;
-            border: none;
-            margin-bottom: 12px;
-            background: #222;
-            color: #fff;
-        }
-
-        input::placeholder {
-            color: #aaa;
-        }
-
-        .btn-year, .btn-life {
-            width: 95%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-year { background: #007bff; }
-        .btn-year:hover { background: #3399ff; }
-
-        .btn-life { background: #ff5733; }
-        .btn-life:hover { background: #ff6f50; }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
-
 <body>
 
 <div class="box">
+
     <img src="/static/bettvplus.png" class="logo">
 
     <h1>Aktiviraj svoj MAC</h1>
 
-    <input type="text" id="mac" placeholder="Unesite MAC adresu">
-    <input type="text" id="code" placeholder="Unesite kod za aktivaciju">
+    <input type="text" id="mac" placeholder="Unesite MAC adresu" required>
+    <input type="text" id="code" placeholder="Unesite kod" required>
 
-    <button class="btn-year" onclick="activate('year')">Aktiviraj – Godina 7.99€</button>
-    <button class="btn-life" onclick="activate('life')">Aktiviraj – Lifetime 11.99€</button>
+    <button onclick="buyYear()">Godina – 7.99€</button>
+    <button onclick="buyLife()">Lifetime – 11.99€</button>
+
 </div>
 
+<script src="https://js.stripe.com/v3/"></script>
 
 <script>
-    const stripe = Stripe("OVDJE_STAVI_SVOJ_STRIPE_PUBLIC_KEY");
 
-    async function activate(type) {
-        const mac = document.getElementById("mac").value.trim();
-        const code = document.getElementById("code").value.trim();
+const stripe = Stripe("{{ public_key }}");
 
-        if (!mac || !code) {
-            alert("Unesite MAC i KOD!");
-            return;
-        }
+// GODINA 7.99€
+function buyYear() {
+    startCheckout("price_1STuPfFZy9W3RRoZe7IqtgVx"); 
+}
 
-        let priceId = "";
-        if (type === "year") priceId = "price_1STnlAFZy9W3RRoZ7nlppvKm";
-        if (type === "life") priceId = "price_1STurmFZy9W3RRoZVZ0RSLAX";
+// LIFETIME 11.99€
+function buyLife() {
+    startCheckout("price_1STurmFZy9W3RRoZVZ0RSLAX");
+}
 
-        const session = await fetch("/create-checkout-session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mac: mac, code: code, priceId: priceId })
-        }).then(res => res.json());
+function startCheckout(priceId) {
 
-        stripe.redirectToCheckout({ sessionId: session.sessionId });
-    }
+    const mac = document.getElementById("mac").value;
+    const code = document.getElementById("code").value;
+
+    fetch("/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mac, code, priceId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        stripe.redirectToCheckout({ sessionId: data.sessionId });
+    });
+}
 </script>
 
 </body>
