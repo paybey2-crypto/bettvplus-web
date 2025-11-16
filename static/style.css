@@ -1,77 +1,63 @@
 body {
     margin: 0;
     padding: 0;
-    background: #000000;   /* ✔ CRNA POZADINA */
+    background: #000000;
     font-family: Arial, sans-serif;
-    color: #fff;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    color: white;
 }
 
-.box {
+.container {
     width: 380px;
-    background: rgba(0, 0, 0, 0.40);
-    padding: 30px;
-    border-radius: 12px;
+    margin: 80px auto;
+    background: #111;
+    padding: 25px;
+    border-radius: 10px;
     text-align: center;
 }
 
 .logo {
-    width: 230px;
-    margin-bottom: 25px;
+    width: 190px;
+    margin-bottom: 20px;
 }
 
-h1 {
-    font-size: 22px;
-    margin-bottom: 25px;
-}
-
-input {
+input, select {
     width: 90%;
-    padding: 12px;
-    border-radius: 6px;
-    border: none;
-    margin-bottom: 12px;
+    padding: 10px;
+    margin-top: 10px;
     background: #222;
-    color: #fff;
-}
-
-input::placeholder {
-    color: #aaa;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 5px;
 }
 
 button {
-    width: 95%;
-    background: #0066ff;
-    padding: 12px;
+    width: 94%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #007bff;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     color: white;
-    font-size: 16px;
     cursor: pointer;
 }
 
 button:hover {
-    background:#0050d6;
+    background: #0a84ff;
 }
 
 .admin-link {
     display: block;
     margin-top: 20px;
-    color: #e6b3ff;
+    color: #aaa;
     text-decoration: none;
-    font-size: 14px;
 }
 
-.admin-link:hover {
-    text-decoration: underline;
+table {
+    width: 100%;
+    margin-top: 20px;
 }
 
-#result {
-    margin-top: 15px;
-    font-size: 16px;
-    color: #fff;
+td, th {
+    padding: 8px;
+    border-bottom: 1px solid #333;
 }
