@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="hr">
 <head>
-    <title>Uplata Uspješna</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="utf-8">
+  <title>Uspjeh - Aktivacija</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-<div class="box">
-    <h1>Hvala!</h1>
-    <p>MAC <b>{{ mac }}</b> je uspješno aktiviran!</p>
-</div>
-
+  <div class="box">
+    <img src="{{ url_for('static', filename='bettvplus.png') }}" class="logo" alt="logo">
+    <h1>MAC uspješno provjeren!</h1>
+    <p>MAC: <strong>{{ mac }}</strong></p>
+    <a class="admin-link" href="/">Natrag</a>
+  </div>
 </body>
 </html>
