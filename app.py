@@ -1,94 +1,112 @@
 from flask import Flask, render_template, request, redirect, jsonify
-import os
-import json
+import stripe
 from datetime import datetime, timedelta
+import os
 
 app = Flask(__name__)
 
-DATABASE_FILE = "mac_db.json"
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
-# ------------------------------
-# Load / Save DB
-# ------------------------------
+# BAZA – privremeno u memoriji (može se prebaciti u SQLite kasnije)
+mac_database = {}
 
-def load_db():
-    if not os.path.exists(DATABASE_FILE):
-        with open(DATABASE_FILE, "w") as f:
-            json.dump({}, f)
-    with open(DATABASE_FILE, "r") as f:
-        return json.load(f)
 
-def save_db(db):
-    with open(DATABASE_FILE, "w") as f:
-        json.dump(db, f, indent=4)
+def mac_expired(mac):
+    if mac not in mac_database:
+        return True
+    expiry = mac_database[mac]["expiry"]
+    return expiry != "lifetime" and expiry < datetime.now()
 
-# ------------------------------
-# ROUTES
-# ------------------------------
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/activate_mac", methods=["POST"])
-def activate_mac():
-    mac = request.form.get("mac", "").strip().lower()
-    code = request.form.get("code", "").strip()
 
-    if mac == "":
-        return jsonify({"status": "error", "message": "Unesite MAC adresu!"})
+@app.route("/check_mac", methods=["POST"])
+def check_mac():
+    mac = request.form.get("mac")
+    code = request.form.get("code")
 
-    db = load_db()
-
-    # MAC već postoji = provjera
-    if mac in db:
-        return jsonify({"status": "success", "message": "MAC uspješno provjeren!"})
-
-    # Dodajemo novi MAC (bez plaćanja)
-    db[mac] = {
-        "activated": True,
-        "expires": "lifetime"
-    }
-
-    save_db(db)
-
-    return jsonify({"status": "success", "message": "MAC aktiviran!"})
-
-# ------------------------------
-# Admin Panel
-# ------------------------------
-
-@app.route("/admin")
-def admin():
-    db = load_db()
-    return render_template("admin.html", data=db)
-
-@app.route("/admin/add", methods=["POST"])
-def admin_add():
-    mac = request.form.get("mac", "").strip().lower()
-    duration = request.form.get("duration")
-
-    if mac == "":
-        return redirect("/admin")
-
-    db = load_db()
-
-    if duration == "1year":
-        expires = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%d")
+    if mac in mac_database:
+        if mac_expired(mac):
+            return redirect(f"/pay?mac={mac}")
+        return render_template("index.html", message="MAC uspješno provjeren!")
     else:
-        expires = "lifetime"
+        return render_template("index.html", message="MAC nije registriran. Kupi paket.", redirect_pay=True)
 
-    db[mac] = {
-        "activated": True,
-        "expires": expires
+
+@app.route("/pay")
+def pay():
+    mac = request.args.get("mac")
+    if not mac:
+        return "MAC adresa nije proslijeđena", 400
+    return render_template("pay.html", mac=mac, public_key=PUBLIC_KEY)
+
+
+@app.route("/create-checkout-session", methods=["POST"])
+def create_checkout_session():
+    mac = request.form["mac"]
+    package = request.form["package"]
+
+    if package == "year":
+        price_id = "price_1YEAR_STRIPE"     # OVDJE UBACI PRAVI PRICE ID
+    elif package == "lifetime":
+        price_id = "price_1LIFE_STRIPE"     # OVDJE UBACI PRAVI PRICE ID
+    else:
+        return "Nevažeći paket", 400
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price": price_id,
+            "quantity": 1
+        }],
+        mode="payment",
+        success_url=f"https://{request.host}/success?mac={mac}&package={package}",
+        cancel_url=f"https://{request.host}/pay?mac={mac}"
+    )
+
+    return jsonify({"id": session.id})
+
+
+@app.route("/success")
+def success():
+    mac = request.args.get("mac")
+    package = request.args.get("package")
+
+    if package == "year":
+        expiry = datetime.now() + timedelta(days=365)
+    else:
+        expiry = "lifetime"
+
+    mac_database[mac] = {
+        "expiry": expiry,
+        "status": "Aktiviran"
     }
 
-    save_db(db)
-    return redirect("/admin")
+    return render_template("success.html", mac=mac, package=package)
 
-# ------------------------------
-# Run App
-# ------------------------------
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    if request.method == "POST":
+        mac = request.form["mac"]
+        duration = request.form["duration"]
+
+        if duration == "1_year":
+            expiry = datetime.now() + timedelta(days=365)
+        else:
+            expiry = "lifetime"
+
+        mac_database[mac] = {
+            "expiry": expiry,
+            "status": "Aktiviran"
+        }
+
+    return render_template("admin.html", macs=mac_database)
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
