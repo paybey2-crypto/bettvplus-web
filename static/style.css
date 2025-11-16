@@ -1,20 +1,8 @@
 body {
     margin: 0;
     padding: 0;
-    background: url('/static/background.png') no-repeat center center fixed;
+    background: url('/static/background.jpg') no-repeat center center fixed;
     background-size: cover;
-    font-family: Arial, sans-serif;
-    color: #fff;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-body {
-    margin: 0;
-    padding: 0;
-    background: #0066ff;
     font-family: Arial, sans-serif;
     color: #fff;
 
@@ -26,7 +14,7 @@ body {
 
 .box {
     width: 380px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.40);
     padding: 30px;
     border-radius: 12px;
     text-align: center;
@@ -58,7 +46,7 @@ input::placeholder {
 
 button {
     width: 95%;
-    background: #007bff;
+    background: #0066ff;
     padding: 12px;
     border: none;
     border-radius: 6px;
@@ -68,7 +56,7 @@ button {
 }
 
 button:hover {
-    background:#005ed6;
+    background:#0050d6;
 }
 
 .admin-link {
@@ -81,4 +69,10 @@ button:hover {
 
 .admin-link:hover {
     text-decoration: underline;
+}
+
+#result {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #fff;
 }
