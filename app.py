@@ -1,158 +1,73 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, request, jsonify, render_template
 import stripe
-import sqlite3
-import os
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# Stripe ključevi iz Render varijabli
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
-PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
+# ------------------------------------
+#  UNESI OVDJE SVOJE STRIPE KLJUČEVE
+# ------------------------------------
+stripe.api_key = "sk_live_TVOJ_SECRET_KEY"
+STRIPE_PUBLIC_KEY = "pk_live_TVOJ_PUBLIC_KEY"
 
-# Stripe cijene
-PRICE_1_YEAR = "price_1STQ3XFZy9W3RRoZhswoUF5R"
-PRICE_LIFETIME = "price_1STurmFZy9W3RRoZVZ0RSLAX"
-
-
-# ─────────────────────────────────────────────
-# DB SETUP
-# ─────────────────────────────────────────────
-def init_db():
-    conn = sqlite3.connect("macs.db")
-    c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS macs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            mac TEXT UNIQUE,
-            status TEXT,
-            expires TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-
-# ─────────────────────────────────────────────
-# HOME PAGE
-# ─────────────────────────────────────────────
+# ------------------------------------
+# HOME PAGE – MAC + KOD + UPLATA
+# ------------------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", public_key=STRIPE_PUBLIC_KEY)
 
-
-# ─────────────────────────────────────────────
-# ADMIN PANEL
-# ─────────────────────────────────────────────
-@app.route("/admin")
-def admin():
-    conn = sqlite3.connect("macs.db")
-    c = conn.cursor()
-    c.execute("SELECT mac, status, expires FROM macs")
-    macs = c.fetchall()
-    conn.close()
-    return render_template("admin.html", macs=macs)
-
-
-# ─────────────────────────────────────────────
-# ADMIN → ADD MAC MANUALLY
-# ─────────────────────────────────────────────
-@app.route("/add_mac", methods=["POST"])
-def add_mac():
-    mac = request.form.get("mac")
-    sub = request.form.get("subscription")
-
-    if sub == "1_year":
-        expires = datetime.now() + timedelta(days=365)
-    else:
-        expires = "lifetime"
-
-    conn = sqlite3.connect("macs.db")
-    c = conn.cursor()
-    c.execute("INSERT OR REPLACE INTO macs (mac, status, expires) VALUES (?, ?, ?)",
-              (mac, "Aktiviran", expires if sub == "1_year" else "lifetime"))
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for("admin"))
-
-
-# ─────────────────────────────────────────────
-# CREATE CHECKOUT SESSION
-# ─────────────────────────────────────────────
+# ------------------------------------
+# STRIPE CHECKOUT – API
+# ------------------------------------
 @app.route("/create-checkout-session", methods=["POST"])
-def create_checkout():
-    mac = request.form.get("mac")
-    plan = request.form.get("plan")  # "1_year" ili "lifetime"
+def create_checkout_session():
+    data = request.get_json()
 
-    price_id = PRICE_1_YEAR if plan == "1_year" else PRICE_LIFETIME
+    mac = data.get("mac")
+    code = data.get("code")
+    price_id = data.get("priceId")
+
+    if not mac or not code or not price_id:
+        return jsonify({"error": "Nedostaju podaci"}), 400
 
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
-        line_items=[{"price": price_id, "quantity": 1}],
+        line_items=[{
+            "price": price_id,
+            "quantity": 1
+        }],
         mode="payment",
-        success_url=request.host_url + "success?mac=" + mac + "&plan=" + plan,
-        cancel_url=request.host_url + "cancel",
+        success_url="https://YOUR_DOMAIN/success?mac=" + mac,
+        cancel_url="https://YOUR_DOMAIN/cancel",
+        metadata={
+            "mac": mac,
+            "code": code
+        }
     )
 
-    return redirect(session.url, code=303)
+    return jsonify({"sessionId": session.id})
 
-
-# ─────────────────────────────────────────────
-# PAYMENT SUCCESS → ACTIVATE MAC
-# ─────────────────────────────────────────────
+# ------------------------------------
+# USPJEŠNA UPLATA
+# ------------------------------------
 @app.route("/success")
 def success():
     mac = request.args.get("mac")
-    plan = request.args.get("plan")
 
-    if plan == "1_year":
-        expires = datetime.now() + timedelta(days=365)
-    else:
-        expires = "lifetime"
+    # OVDE SE AKTIVIRA MAC (ubaci kasnije u bazu)
+    # activate_mac(mac)
 
-    conn = sqlite3.connect("macs.db")
-    c = conn.cursor()
-    c.execute("INSERT OR REPLACE INTO macs (mac, status, expires) VALUES (?, ?, ?)",
-              (mac, "Aktiviran", expires if plan == "1_year" else "lifetime"))
-    conn.commit()
-    conn.close()
+    return render_template("success.html", mac=mac)
 
-    return "Uplata uspješna! MAC je aktiviran."
-
-
+# ------------------------------------
+# OTKAZANA UPLATA
+# ------------------------------------
 @app.route("/cancel")
 def cancel():
-    return "Plaćanje otkazano."
+    return render_template("cancel.html")
 
-
-# ─────────────────────────────────────────────
-# API → provjera MAC
-# ─────────────────────────────────────────────
-@app.route("/check_mac", methods=["POST"])
-def check_mac():
-    data = request.json
-    mac = data.get("mac")
-
-    conn = sqlite3.connect("macs.db")
-    c = conn.cursor()
-    c.execute("SELECT status, expires FROM macs WHERE mac = ?", (mac,))
-    result = c.fetchone()
-    conn.close()
-
-    if not result:
-        return jsonify({"status": "not_found"})
-
-    status, expires = result
-
-    if expires != "lifetime":
-        if datetime.now() > datetime.fromisoformat(expires):
-            return jsonify({"status": "expired"})
-
-    return jsonify({"status": "active", "expires": expires})
-
-
+# ------------------------------------
+# RUN
+# ------------------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
