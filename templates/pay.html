@@ -1,11 +1,42 @@
-<h2>{{ message }}</h2>
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nadoplata</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body style="background:#000; color:white; font-family:Arial; text-align:center;">
+    <h1>Kupovina paketa</h1>
+    <p>MAC: {{ mac }}</p>
 
-{% if not m3u %}
-<form action="/create-checkout-session" method="POST">
-    <input type="hidden" name="mac" value="{{ mac }}">
-    <button type="submit" name="plan" value="year">Godišnja aktivacija</button>
-    <button type="submit" name="plan" value="lifetime">Lifetime</button>
-</form>
-{% else %}
-<pre>{{ m3u }}</pre>
-{% endif %}
+    <form id="payment-form">
+        <input type="hidden" name="mac" value="{{ mac }}">
+
+        <select name="package" id="package">
+            <option value="year">1 godina – 7.99€</option>
+            <option value="lifetime">Lifetime – 11.99€</option>
+        </select>
+
+        <button type="button" onclick="pay()">Kupi</button>
+    </form>
+
+    <script>
+        const stripe = Stripe("{{ public_key }}");
+
+        async function pay() {
+            const mac = document.querySelector("input[name='mac']").value;
+            const package = document.getElementById("package").value;
+
+            const response = await fetch("/create-checkout-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `mac=${mac}&package=${package}`
+            });
+
+            const session = await response.json();
+
+            stripe.redirectToCheckout({ sessionId: session.id });
+        }
+    </script>
+</body>
+</html>
