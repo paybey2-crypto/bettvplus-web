@@ -1,57 +1,54 @@
 body {
     margin: 0;
     padding: 0;
-    background: #000;
+    background: #0b0b0d; /* crna pozadina */
     font-family: Arial, sans-serif;
     color: #fff;
 
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .box {
-    width: 380px;
-    background: rgba(0, 0, 0, 0.45);
+    width: 420px;
+    background: rgba(0,0,0,0.45);
     padding: 30px;
     border-radius: 12px;
     text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 
 .logo {
-    width: 260px;
-    margin-bottom: 25px;
+    width: 220px;
+    margin-bottom: 20px;
 }
 
-h1 {
-    font-size: 22px;
-    margin-bottom: 25px;
-    text-shadow: 0px 0px 6px #0066ff;
-}
+h1 { font-size: 22px; margin-bottom: 18px; }
 
 input {
-    width: 90%;
+    width: 100%;
     padding: 12px;
     border-radius: 6px;
     border: none;
     margin-bottom: 12px;
-    background: #222;
+    background: #111;
     color: #fff;
+    box-sizing: border-box;
 }
 
-button {
-    width: 95%;
-    background: #0066ff;
+.btn {
+    display: inline-block;
+    width: 48%;
+    margin: 6px 1%;
     padding: 12px;
+    border-radius: 8px;
     border: none;
-    border-radius: 6px;
+    background: linear-gradient(90deg,#2196F3,#21CBF3);
     color: white;
-    font-size: 16px;
     cursor: pointer;
-    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-button:hover {
-    background:#0050cc;
-}
+.admin-link { display:block; margin-top:18px; color:#d0b3ff; text-decoration:none; }
