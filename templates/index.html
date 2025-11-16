@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>bet tv plus</title>
+    <meta charset="UTF-8">
+    <title>Aktivacija MAC adrese</title>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
-<body style="text-align:center; margin-top:60px;">
+<body style="background:#111; color:white; text-align:center; padding-top:100px; font-family:Arial">
 
+<h1>bet<span style="color:#4db2ff">tv.plus</span></h1>
 <h2>Aktivacija MAC adrese</h2>
 
-<form action="/create-checkout-session" method="POST">
-    <input type="text" name="mac" placeholder="MAC adresa" required
-           style="padding:10px; width:300px;"><br><br>
+<input id="mac" placeholder="59:d9:5d:f3:8c:cf" style="padding:10px; width:280px; font-size:18px;"><br><br>
 
-    <button type="submit" name="product" value="year"
-            style="padding:10px 20px; font-size:18px;">
-        Godina - 7.99€
-    </button>
+<button onclick="pay('year')" style="padding:15px; width:220px; background:#00c4b3; border:none; color:white; font-size:20px; border-radius:8px;">Godina - 7.99€</button>
+<br><br>
 
-    <br><br>
-
-    <button type="submit" name="product" value="lifetime"
-            style="padding:10px 20px; font-size:18px;">
-        Lifetime - 11.99€
-    </button>
-</form>
+<button onclick="pay('lifetime')" style="padding:15px; width:220px; background:#00c4b3; border:none; color:white; font-size:20px; border-radius:8px;">Lifetime - 11.99€</button>
 
 <br><br>
-<a href="/admin">Administratorska ploča</a>
+<a href="/admin/panel" style="color:grey">Administratorska ploča</a>
+
+<script>
+    const stripe = Stripe("{{ public_key }}");
+
+    function pay(plan) {
+        const mac = document.getElementById("mac").value;
+
+        fetch("/create-checkout-session", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({mac: mac, plan: plan})
+        })
+        .then(res => res.json())
+        .then(data => stripe.redirectToCheckout({sessionId: data.id}));
+    }
+</script>
 
 </body>
 </html>
