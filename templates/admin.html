@@ -1,20 +1,47 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Admin</title></head>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
 <body>
-    <h1>Dobrodošli u Admin Panel!</h1>
-    <p>Ovdje možete pregledati MAC adrese</p>
-    <table border="1" cellpadding="6">
-        <tr><th>MAC</th><th>Status</th><th>Start</th><th>End</th></tr>
-        {% for r in rows %}
+
+<div class="container">
+
+    <h2>Administratorska ploča</h2>
+
+    <form method="POST" action="/admin/add">
+        <input type="text" name="mac" placeholder="MAC adresa" required>
+
+        <select name="duration">
+            <option value="1year">1 godina</option>
+            <option value="lifetime">Lifetime</option>
+        </select>
+
+        <button type="submit">Dodaj MAC</button>
+    </form>
+
+    <h3>Registrirani MAC uređaji</h3>
+
+    <table>
         <tr>
-            <td>{{ r[0] }}</td>
-            <td>{{ r[1] }}</td>
-            <td>{{ r[2] }}</td>
-            <td>{{ r[3] }}</td>
+            <th>MAC</th>
+            <th>Status</th>
+            <th>Ističe</th>
+        </tr>
+
+        {% for mac, info in data.items() %}
+        <tr>
+            <td>{{ mac }}</td>
+            <td>{{ "Aktiviran" if info.activated else "Neaktivan" }}</td>
+            <td>{{ info.expires }}</td>
         </tr>
         {% endfor %}
     </table>
-    <p><a href="/">Nazad</a></p>
+
+</div>
+
 </body>
 </html>
