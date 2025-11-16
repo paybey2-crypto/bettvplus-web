@@ -1,61 +1,56 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect
 import stripe
 import os
 
 app = Flask(__name__)
 
-# Stripe API ključ
+# Učitavanje environment varijabli
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-# Tvoji price ID-evi
-PRICE_YEARLY = "price_1STQ3XFZy9W3RRoZhswoUF5R"
-PRICE_LIFETIME = "price_1STurmFZy9W3RRoZVZ0RSLAX"
+PRICE_YEAR = os.getenv("PRICE_YEAR")
+PRICE_LIFETIME = os.getenv("PRICE_LIFETIME")
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
-YOUR_DOMAIN = "https://bettvplus-web-k3n2.onrender.com"
 
-@app.route('/create-checkout-session', methods=['POST'])
+@app.route("/")
+def index():
+    return render_template("index.html", 
+                           stripe_public_key=STRIPE_PUBLIC_KEY,
+                           price_year=PRICE_YEAR,
+                           price_lifetime=PRICE_LIFETIME)
+
+
+@app.route("/create-checkout-session", methods=["POST"])
 def create_checkout_session():
-    data = request.json
-    mac = data.get("mac")
-    plan = data.get("plan")  # "yearly" ili "lifetime"
-
-    if not mac or not plan:
-        return jsonify({"error": "MAC ili plan nedostaje"}), 400
-
-    # Biranje price ID-a
-    if plan == "yearly":
-        price_id = PRICE_YEARLY
-    elif plan == "lifetime":
-        price_id = PRICE_LIFETIME
-    else:
-        return jsonify({"error": "Nepoznat plan"}), 400
+    price_id = request.form.get("price_id")
 
     try:
-        checkout_session = stripe.checkout.Session.create(
+        session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[{
                 "price": price_id,
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=f"{YOUR_DOMAIN}/success.html",
-            cancel_url=f"{YOUR_DOMAIN}/cancel.html",
-            metadata={"mac": mac, "plan": plan}
+            success_url="https://bettvplus-web-k3n2.onrender.com/success",
+            cancel_url="https://bettvplus-web-k3n2.onrender.com/cancel",
         )
-        return jsonify({"url": checkout_session.url})
+
+        return redirect(session.url, code=303)
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return str(e), 400
 
 
-@app.route('/')
-def serve_index():
-    return send_from_directory('.', 'index.html')
+@app.route("/success")
+def success():
+    return "<h1>Uplata uspješna ✔️</h1>"
 
 
-@app.route('/<path:path>')
-def serve_static(path):
-    return send_from_directory('.', path)
+@app.route("/cancel")
+def cancel():
+    return "<h1>Uplata otkazana ❌</h1>"
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
