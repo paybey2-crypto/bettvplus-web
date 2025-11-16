@@ -1,39 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="hr">
 <head>
     <meta charset="UTF-8">
-    <title>Aktivacija MAC adrese</title>
-    <script src="https://js.stripe.com/v3/"></script>
+    <title>BetTV Plus - Aktivacija</title>
+    <style>
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            padding-top: 80px;
+        }
+        input {
+            padding: 12px;
+            width: 260px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            width: 260px;
+            padding: 14px;
+            background: #14c7c7;
+            color: white;
+            font-size: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .admin {
+            margin-top: 40px;
+            color: #ccc;
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body style="background:#111; color:white; text-align:center; padding-top:100px; font-family:Arial">
+<body>
 
-<h1>bet<span style="color:#4db2ff">tv.plus</span></h1>
 <h2>Aktivacija MAC adrese</h2>
 
-<input id="mac" placeholder="59:d9:5d:f3:8c:cf" style="padding:10px; width:280px; font-size:18px;"><br><br>
+<input id="mac" placeholder="Upišite MAC adresu">
 
-<button onclick="pay('year')" style="padding:15px; width:220px; background:#00c4b3; border:none; color:white; font-size:20px; border-radius:8px;">Godina - 7.99€</button>
-<br><br>
+<button onclick="pay('yearly')">Godina - 7.99€</button>
+<button onclick="pay('lifetime')">Lifetime - 11.99€</button>
 
-<button onclick="pay('lifetime')" style="padding:15px; width:220px; background:#00c4b3; border:none; color:white; font-size:20px; border-radius:8px;">Lifetime - 11.99€</button>
-
-<br><br>
-<a href="/admin/panel" style="color:grey">Administratorska ploča</a>
+<a href="/admin" class="admin">Administratorska ploča</a>
 
 <script>
-    const stripe = Stripe("{{ public_key }}");
-
-    function pay(plan) {
-        const mac = document.getElementById("mac").value;
-
-        fetch("/create-checkout-session", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({mac: mac, plan: plan})
-        })
-        .then(res => res.json())
-        .then(data => stripe.redirectToCheckout({sessionId: data.id}));
+function pay(plan) {
+    const mac = document.getElementById("mac").value.trim();
+    if (!mac) {
+        alert("Unesite MAC adresu!");
+        return;
     }
+
+    fetch("/create-checkout-session", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ mac: mac, plan: plan })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            alert("Greška: " + data.error);
+        }
+    });
+}
 </script>
 
 </body>
