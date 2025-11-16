@@ -1,3 +1,14 @@
+ALLOWED_DNS = "https://anotv.org:80"
+
+@app.route('/api/check_portal', methods=['POST'])
+def check_portal():
+    data = request.json
+    portal = data.get("portal")
+
+    if portal != ALLOWED_DNS:
+        return {"status": "error", "message": "Nedozvoljeni portal. Dozvoljen je samo službeni BET TV PLUS DNS."}, 403
+    
+    return {"status": "ok", "message": "Portal ispravan."}
 from flask import Flask, render_template, request, redirect
 import stripe
 import os
