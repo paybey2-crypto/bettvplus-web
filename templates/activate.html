@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aktivacija MAC adrese</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
+<div class="box">
+    <img src="/static/bettvplus.png" class="logo">
+
+    <h1>Aktiviraj MAC adresu</h1>
+
+    <p style="color:#ccc;">MAC: <b>{{ mac }}</b></p>
+
+    <a href="/pay/year/{{ mac }}">
+        <button style="background:#0096ff;">Aktiviraj 1 godinu – 7.99€</button>
+    </a>
+
+    <a href="/pay/lifetime/{{ mac }}">
+        <button style="background:#00c853; margin-top:10px;">Lifetime – 11.99€</button>
+    </a>
+
+    <a class="admin-link" href="/">Povratak</a>
+</div>
+
+</body>
+</html>
