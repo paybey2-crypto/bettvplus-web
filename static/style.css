@@ -1,8 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: url('/static/background.jpg') no-repeat center center fixed;
-    background-size: cover;
+    background: #000000;   /* ✔ CRNA POZADINA */
     font-family: Arial, sans-serif;
     color: #fff;
 
