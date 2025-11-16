@@ -1,91 +1,61 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import stripe
 import os
-import json
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# STRIPE KEYS – čita iz RENDER environment varijabli
+# Stripe API ključ
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
-# “Baza” u JSON datoteci
-DATA_FILE = "mac_data.json"
+# Tvoji price ID-evi
+PRICE_YEARLY = "price_1STQ3XFZy9W3RRoZhswoUF5R"
+PRICE_LIFETIME = "price_1STurmFZy9W3RRoZVZ0RSLAX"
 
-def load_data():
-    try:
-        with open(DATA_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {}
+YOUR_DOMAIN = "https://bettvplus-web-k3n2.onrender.com"
 
-def save_data(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=4)
-
-@app.route("/")
-def index():
-    return render_template("index.html", public_key=PUBLIC_KEY)
-
-@app.route("/create-checkout-session", methods=["POST"])
+@app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    data = request.get_json()
+    data = request.json
     mac = data.get("mac")
-    plan = data.get("plan")
+    plan = data.get("plan")  # "yearly" ili "lifetime"
 
-    if plan == "year":
-        price = 7.99
-        duration_days = 365
+    if not mac or not plan:
+        return jsonify({"error": "MAC ili plan nedostaje"}), 400
+
+    # Biranje price ID-a
+    if plan == "yearly":
+        price_id = PRICE_YEARLY
     elif plan == "lifetime":
-        price = 11.99
-        duration_days = 9999
+        price_id = PRICE_LIFETIME
     else:
-        return jsonify({"error": "Invalid plan"}), 400
+        return jsonify({"error": "Nepoznat plan"}), 400
 
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{
-            "price_data": {
-                "currency": "eur",
-                "product_data": {"name": f"Subscription for {mac}"},
-                "unit_amount": int(price * 100),
-            },
-            "quantity": 1,
-        }],
-        mode="payment",
-        success_url=f"{request.host_url}success?mac={mac}&days={duration_days}",
-        cancel_url=f"{request.host_url}",
-    )
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price": price_id,
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=f"{YOUR_DOMAIN}/success.html",
+            cancel_url=f"{YOUR_DOMAIN}/cancel.html",
+            metadata={"mac": mac, "plan": plan}
+        )
+        return jsonify({"url": checkout_session.url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    return jsonify({"id": session.id})
 
-@app.route("/success")
-def success():
-    mac = request.args.get("mac")
-    days = int(request.args.get("days", 0))
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
-    data = load_data()
-    expiry = datetime.now() + timedelta(days=days)
 
-    data[mac] = expiry.strftime("%Y-%m-%d %H:%M:%S")
-    save_data(data)
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('.', path)
 
-    return render_template("success.html", mac=mac)
 
-@app.route("/admin/panel")
-def admin_panel():
-    data = load_data()
-    return render_template("admin.html", data=data)
-
-@app.route("/api/check", methods=["POST"])
-def api_check():
-    mac = request.json.get("mac")
-    data = load_data()
-
-    if mac in data:
-        expiry = datetime.strptime(data[mac], "%Y-%m-%d %H:%M:%S")
-        if expiry > datetime.now():
-            return jsonify({"status": "active", "expiry": data[mac]})
-
-    return jsonify({"status": "inactive"})
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=10000)
