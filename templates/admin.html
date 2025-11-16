@@ -1,41 +1,27 @@
-<!doctype html>
-<html lang="hr">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Admin - Bet TV Plus</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
 </head>
-<body>
-  <div class="box">
-    {% if not session.admin %}
-      <h1>Administratorska ploča</h1>
-      <form method="post">
-        <input name="password" placeholder="Unesi lozinku" />
-        <button type="submit">Prijavi se</button>
-      </form>
-    {% else %}
-      <h1>Administratorska ploča</h1>
-      <form method="post">
-        <input name="mac" placeholder="MAC adresa"/>
-        <select name="term">
-          <option value="1">1 godina</option>
-          <option value="lifetime">Lifetime</option>
-        </select>
-        <button type="submit">Dodaj MAC</button>
-      </form>
+<body style="background:#111; color:white; font-family:Arial; padding:40px;">
 
-      <h2>Registrirani MAC uređaji</h2>
-      <table style="width:100%; color:#fff">
-        <tr><th>MAC</th><th>Status</th><th>Istiće</th></tr>
-        {% for mac, status, expires in macs %}
-          <tr>
-            <td>{{ mac }}</td><td>{{ status }}</td><td>{{ expires if expires else '-' }}</td>
-          </tr>
-        {% endfor %}
-      </table>
+<h1>Admin Panel</h1>
 
-      <a href="/logout" class="admin-link">Odjava</a>
-    {% endif %}
-  </div>
+<table border="1" cellpadding="10" style="color:white; width:80%; border-color:white;">
+<tr>
+    <th>MAC adresa</th>
+    <th>Vrijedi do</th>
+</tr>
+
+{% for mac, expiry in data.items() %}
+<tr>
+    <td>{{ mac }}</td>
+    <td>{{ expiry }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
 </body>
 </html>
