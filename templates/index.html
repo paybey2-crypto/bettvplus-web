@@ -2,38 +2,113 @@
 <html lang="hr">
 <head>
     <meta charset="UTF-8">
-    <title>Aktivacija MAC</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>BET TV PLUS Aktivacija</title>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: Arial, sans-serif;
+            color: #fff;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            width: 380px;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 240px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 12px;
+            background: #222;
+            color: #fff;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        .btn-year, .btn-life {
+            width: 95%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-year { background: #007bff; }
+        .btn-year:hover { background: #3399ff; }
+
+        .btn-life { background: #ff5733; }
+        .btn-life:hover { background: #ff6f50; }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-    <img src="/static/bettvplus.png" class="logo"/>
+<div class="box">
+    <img src="/static/bettvplus.png" class="logo">
 
-    <h2>Aktivacija MAC adrese</h2>
+    <h1>Aktiviraj svoj MAC</h1>
 
-    <form id="macForm">
-        <input type="text" name="mac" placeholder="Unesi MAC adresu" required>
-        <input type="text" name="code" placeholder="Unesi kod (ako ga imaš)">
-        <button type="submit">Aktiviraj / Provjeri MAC</button>
-    </form>
+    <input type="text" id="mac" placeholder="Unesite MAC adresu">
+    <input type="text" id="code" placeholder="Unesite kod za aktivaciju">
 
-    <p id="result"></p>
-
-    <a class="admin-link" href="/admin">Administratorska ploča</a>
+    <button class="btn-year" onclick="activate('year')">Aktiviraj – Godina 7.99€</button>
+    <button class="btn-life" onclick="activate('life')">Aktiviraj – Lifetime 11.99€</button>
 </div>
 
+
 <script>
-document.getElementById("macForm").onsubmit = async (e) => {
-    e.preventDefault();
+    const stripe = Stripe("OVDJE_STAVI_SVOJ_STRIPE_PUBLIC_KEY");
 
-    let form = new FormData(document.getElementById("macForm"));
-    let request = await fetch("/activate_mac", { method: "POST", body: form });
-    let response = await request.json();
+    async function activate(type) {
+        const mac = document.getElementById("mac").value.trim();
+        const code = document.getElementById("code").value.trim();
 
-    document.getElementById("result").innerHTML = response.message;
-};
+        if (!mac || !code) {
+            alert("Unesite MAC i KOD!");
+            return;
+        }
+
+        let priceId = "";
+        if (type === "year") priceId = "price_1STnlAFZy9W3RRoZ7nlppvKm";
+        if (type === "life") priceId = "price_1STurmFZy9W3RRoZVZ0RSLAX";
+
+        const session = await fetch("/create-checkout-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mac: mac, code: code, priceId: priceId })
+        }).then(res => res.json());
+
+        stripe.redirectToCheckout({ sessionId: session.sessionId });
+    }
 </script>
 
 </body>
