@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html lang="hr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Bet TV Plus - Aktivacija MAC</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css?v=2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bet tv.plus</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
-
     <div class="box">
-
         <img src="/static/bettvplus.png" class="logo">
 
         <h1>Aktivacija MAC adrese</h1>
 
-        <form action="/mac" method="GET">
-
-            <input type="text" name="mac" placeholder="Unesi MAC adresu" required>
+        <form id="form">
+            <input type="text" name="mac" placeholder="Unesi MAC adresu">
             <input type="text" name="code" placeholder="Unesi kod (ako ga imaš)">
-
             <button type="submit">Aktiviraj / Provjeri MAC</button>
-
         </form>
 
         <a href="/admin" class="admin-link">Administratorska ploča</a>
 
+        <div id="result"></div>
     </div>
 
-</body>
+<script>
+document.getElementById("form").onsubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
 
+    let res = await fetch("/activate", {
+        method: "POST",
+        body: formData
+    });
+
+    let data = await res.json();
+    document.getElementById("result").innerHTML = data.message;
+};
+</script>
+</body>
 </html>
