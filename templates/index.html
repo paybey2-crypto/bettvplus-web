@@ -1,57 +1,48 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="hr">
 <head>
-    <title>BET TV PLUS Aktivacija</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="utf-8">
+  <title>Bet TV Plus - Aktivacija MAC</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script>
+    const PUBLIC_KEY = "{{ public_key }}";
+  </script>
 </head>
 <body>
+  <div class="box">
+    <img src="{{ url_for('static', filename='bettvplus.png') }}" class="logo" alt="logo">
+    <h1>Aktivacija MAC adrese</h1>
 
-<div class="box">
+    <div id="message"></div>
 
-    <img src="/static/bettvplus.png" class="logo">
+    <input id="mac" placeholder="Unesi MAC adresu (npr. 00:11:22:33:44:55)"/>
+    <div class="buttons">
+      <button id="pay-year" class="btn">Godina - 7.99€</button>
+      <button id="pay-lifetime" class="btn">Lifetime - 11.99€</button>
+    </div>
 
-    <h1>Aktiviraj svoj MAC</h1>
-
-    <input type="text" id="mac" placeholder="Unesite MAC adresu" required>
-    <input type="text" id="code" placeholder="Unesite kod" required>
-
-    <button onclick="buyYear()">Godina – 7.99€</button>
-    <button onclick="buyLife()">Lifetime – 11.99€</button>
-
-</div>
-
-<script src="https://js.stripe.com/v3/"></script>
+    <a class="admin-link" href="/admin">Administratorska ploča</a>
+  </div>
 
 <script>
-
-const stripe = Stripe("{{ public_key }}");
-
-// GODINA 7.99€
-function buyYear() {
-    startCheckout("price_1STuPfFZy9W3RRoZe7IqtgVx"); 
+async function startCheckout(priceType) {
+  const mac = document.getElementById('mac').value.trim();
+  if (!mac) { alert('Unesite MAC adresu'); return; }
+  const res = await fetch('/create-checkout-session', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({mac, price_type: priceType})
+  });
+  const data = await res.json();
+  if (data.url) {
+    window.location = data.url;
+  } else {
+    alert("Greška: " + (data.error || "nepoznato"));
+  }
 }
 
-// LIFETIME 11.99€
-function buyLife() {
-    startCheckout("price_1STurmFZy9W3RRoZVZ0RSLAX");
-}
-
-function startCheckout(priceId) {
-
-    const mac = document.getElementById("mac").value;
-    const code = document.getElementById("code").value;
-
-    fetch("/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mac, code, priceId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        stripe.redirectToCheckout({ sessionId: data.sessionId });
-    });
-}
+document.getElementById('pay-year').addEventListener('click', ()=> startCheckout('year'));
+document.getElementById('pay-lifetime').addEventListener('click', ()=> startCheckout('lifetime'));
 </script>
-
 </body>
 </html>
