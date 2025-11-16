@@ -1,47 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin panel</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="utf-8">
+  <title>Admin - Bet TV Plus</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
-
-<div class="container">
-
-    <h2>Administratorska ploča</h2>
-
-    <form method="POST" action="/admin/add">
-        <input type="text" name="mac" placeholder="MAC adresa" required>
-
-        <select name="duration">
-            <option value="1year">1 godina</option>
-            <option value="lifetime">Lifetime</option>
+  <div class="box">
+    {% if not session.admin %}
+      <h1>Administratorska ploča</h1>
+      <form method="post">
+        <input name="password" placeholder="Unesi lozinku" />
+        <button type="submit">Prijavi se</button>
+      </form>
+    {% else %}
+      <h1>Administratorska ploča</h1>
+      <form method="post">
+        <input name="mac" placeholder="MAC adresa"/>
+        <select name="term">
+          <option value="1">1 godina</option>
+          <option value="lifetime">Lifetime</option>
         </select>
-
         <button type="submit">Dodaj MAC</button>
-    </form>
+      </form>
 
-    <h3>Registrirani MAC uređaji</h3>
-
-    <table>
-        <tr>
-            <th>MAC</th>
-            <th>Status</th>
-            <th>Ističe</th>
-        </tr>
-
-        {% for mac, info in data.items() %}
-        <tr>
-            <td>{{ mac }}</td>
-            <td>{{ "Aktiviran" if info.activated else "Neaktivan" }}</td>
-            <td>{{ info.expires }}</td>
-        </tr>
+      <h2>Registrirani MAC uređaji</h2>
+      <table style="width:100%; color:#fff">
+        <tr><th>MAC</th><th>Status</th><th>Istiće</th></tr>
+        {% for mac, status, expires in macs %}
+          <tr>
+            <td>{{ mac }}</td><td>{{ status }}</td><td>{{ expires if expires else '-' }}</td>
+          </tr>
         {% endfor %}
-    </table>
+      </table>
 
-</div>
-
+      <a href="/logout" class="admin-link">Odjava</a>
+    {% endif %}
+  </div>
 </body>
 </html>
