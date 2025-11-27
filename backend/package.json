@@ -1,5 +1,4 @@
-"scripts": {
-  "start": "node server.js"
+ "start": "node server.js"
 }
 {
   "name": "bet-tv-plus-backend",
@@ -7,7 +6,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-  },
+  
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
