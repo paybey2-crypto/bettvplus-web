@@ -1,2 +1,16 @@
-Could not read package.json
+{
+  "name": "bettvplus-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "mysql2": "^3.9.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "stripe": "^14.0.0"
+  }
+}
 
