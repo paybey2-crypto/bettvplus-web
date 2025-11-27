@@ -1,3 +1,8 @@
+"main": "app.js",
+"scripts": {
+  "start": "node app.js"
+}
+
 function payYear() {
     window.location.href = "https://tvoj-stripe-link-za-godisnju-pretplatu.com";
 }
