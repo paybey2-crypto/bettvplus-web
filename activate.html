@@ -5,8 +5,6 @@
     <title>MAC Activate</title>
     <link rel="stylesheet" href="style.css">
 </head>
-    <script src="app.js"></script>
-
 <body>
 
 <div class="logo">bet<span>tv</span>.plus</div>
@@ -16,17 +14,20 @@
 <div class="card">
     <h2>MAC ACTIVATE</h2>
 
+    <!-- OPTIONS – Ovdje su PAID dugmad -->
     <div class="option">
         <div class="label">For a Year 7.99€</div>
-        <button class="btn">PAID</button>
+        <button class="btn" onclick="payYear()">PAID</button>
     </div>
 
     <div class="option">
         <div class="label">Lifetime 11.99€</div>
-        <button class="btn">PAID</button>
+        <button class="btn" onclick="payLifetime()">PAID</button>
     </div>
 </div>
 
+<!-- JS za Stripe redirect -->
+<script src="app.js"></script>
+
 </body>
 </html>
-
