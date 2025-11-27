@@ -1,3 +1,11 @@
+function payYear() {
+    window.location.href = "https://tvoj-stripe-link-za-godisnju-pretplatu.com";
+}
+
+function payLifetime() {
+    window.location.href = "https://tvoj-stripe-link-za-lifetime.com";
+}
+
 document.getElementById("activateForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const mac = document.getElementById("mac").value;
